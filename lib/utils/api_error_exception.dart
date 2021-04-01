@@ -1,10 +1,10 @@
-class ApiErrorException implements Exception {
-  final messgae;
+class ApiErrorException implements Exception{
 
-  ApiErrorException(this.messgae);
+  final message;
 
+  ApiErrorException(this.message);
   @override
   String toString() {
-    return messgae;
+    return message;
   }
 }
