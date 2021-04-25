@@ -69,6 +69,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Text("Discount"),
+              AppAmountWidget(
+                amount: "0",
+              )
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Text("Paying Amount"),
               AppAmountWidget(
                 amount: model.payingAmount,
@@ -100,6 +110,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     final appRepo = Provider.of<AppRepo>(context);
     return ViewModelBuilder<CheckOutViewModel>.reactive(
@@ -109,6 +125,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             widget.discountAmount);
         model.fetchAddressList();
       },
+      
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(

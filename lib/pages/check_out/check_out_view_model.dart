@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/model/address_data.dart';
 import 'package:lotus_farm/model/storeData.dart';
 import 'package:lotus_farm/pages/addEditAddressPage/addEditAddressPage.dart';
+import 'package:lotus_farm/prefrence_util/Prefs.dart';
+import 'package:lotus_farm/resources/strings/app_strings.dart';
 import 'package:lotus_farm/services/api_service.dart';
 import 'package:lotus_farm/utils/Constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
@@ -32,6 +35,7 @@ class CheckOutViewModel extends BaseViewModel {
   DateTime _pickUpDate;
   String _timeSlot;
   String _totalAmount, _payingAmount, _discountAmount;
+ 
 
   bool get loading => _loading;
   bool get hasError => _hasError;
@@ -51,6 +55,12 @@ class CheckOutViewModel extends BaseViewModel {
   void onRadioValueChanged(int value) {
     _paymentMethodRadio = value;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _razorpay.clear(); // Removes all listeners
+    super.dispose();
   }
 
   void onDeliveryRadioValueChanged(int value) {
@@ -182,15 +192,24 @@ class CheckOutViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void payClicked() {
+  void payClicked() async {
+    final user_id = await Prefs.userId;
+    final name = await Prefs.name;
+    final last_name = await Prefs.surName;
+    final number = await Prefs.mobileNumber;
+    final email = await Prefs.emailId;
     var options = {
-      'key': 'rzp_live_8L8V8KSkf9Af6x',
-      'amount': 100,
+      'key': AppStrings.testKey,
+      'amount': int.parse(_payingAmount) * 100,
       'name': 'Lotus farms',
-      'description': 'checkien Pieces',
-      'order_id':'',
-      'timeout':60, // in seconds
-      'prefill': {'contact': '8655891410', 'email': 'nagendra@inventifweb.com'}
+      'description': '',
+      'order_id': '',
+      'timeout': 120, // in seconds
+      'prefill': {
+        'contact': '$number',
+        'email': '$email',
+        'name': '$name $last_name'
+      }
     };
     _razorpay.open(options);
   }
