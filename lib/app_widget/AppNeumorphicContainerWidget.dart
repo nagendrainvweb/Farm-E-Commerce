@@ -21,6 +21,7 @@ class AppNeumorphicContainer extends StatelessWidget {
           color: color,
           intensity: 0.6,
           surfaceIntensity: 0.50,
+          
           boxShape:
               NeumorphicBoxShape.roundRect(BorderRadius.circular(radius))),
       child: child,

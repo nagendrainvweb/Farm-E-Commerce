@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app_widget/AppButton.dart';
 import 'package:lotus_farm/pages/login_page/login_view_model.dart';
 import 'package:lotus_farm/resources/images/images.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
+import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,14 +15,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  
   @override
   Widget build(BuildContext context) {
+    final repo = Provider.of<AppRepo>(context,listen: false);
     return ViewModelBuilder<LoginViewModel>.reactive(
       viewModelBuilder: () => LoginViewModel(),
+      onModelReady: (model){
+        model.initData(repo);
+      },
       builder: (_, model, child) => Scaffold(
+        appBar: AppBar(),
+        extendBodyBehindAppBar: true,
         body: Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: Spacing.bigMargin, vertical: Spacing.bigMargin),
+              horizontal: Spacing.bigMargin, ),
           child: Center(
             child: ListView(
               shrinkWrap: true,
@@ -49,18 +58,19 @@ class _LoginPageState extends State<LoginPage> {
                     //     ),
                     //   ],
                     // ),
-                   // SizedBox(height: 4),
+                    // SizedBox(height: 4),
                     Container(
                       decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.grey200, width: 1),
+                          border:
+                              Border.all(color: AppColors.grey200, width: 1),
                           borderRadius: BorderRadius.circular(12)),
                       child: Row(
                         children: [
                           Container(
                             decoration: BoxDecoration(
                                 border: Border(
-                              right:
-                                  BorderSide(color: AppColors.grey200, width: 1),
+                              right: BorderSide(
+                                  color: AppColors.grey200, width: 1),
                             )),
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -73,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Expanded(
                               child: TextField(
+                            controller: model.numberController,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.only(
@@ -86,7 +97,9 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 30),
                     AppButtonWidget(
                       onPressed: () {
-                        model.loginClicked();
+                        model.checkValidNumber((String text) {
+                          showSnackBar(text);
+                        });
                       },
                       text: "Send OTP",
                       width: double.maxFinite,
@@ -146,5 +159,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  showSnackBar(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(text),
+      behavior: SnackBarBehavior.floating,
+    ));
   }
 }

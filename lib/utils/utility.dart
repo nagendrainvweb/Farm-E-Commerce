@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:lotus_farm/app/locator.dart';
+import 'package:lotus_farm/pages/home_page/home_page.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 var smallTextStyle = TextStyle(
     fontSize: 12, fontWeight: FontWeight.normal, color: Colors.grey.shade700);
@@ -46,7 +50,6 @@ final String NO_INTERNET_CONN = "No internet connection";
 final String SOMETHING_WRONG_TEXT =
     "Something went wrong, sorry for inconvenience cause you, Please try after some time.";
 
-    
 myPrint(String text) {
   print(text);
 }
@@ -62,10 +65,11 @@ class Utility {
     return MediaQuery.of(context).size.width -
         MediaQuery.of(context).size.width * 0.3;
   }
+
   static printWrapped(String text) {
-  final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-  pattern.allMatches(text).forEach((match) => debugPrint(match.group(0)));
-}
+    final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
+    pattern.allMatches(text).forEach((match) => debugPrint(match.group(0)));
+  }
 
   static Future pushToNext(final page, BuildContext context) {
     return Navigator.push(
@@ -75,7 +79,34 @@ class Utility {
           settings: RouteSettings(name: '${page.runtimeType}')),
     );
   }
+  // static Future pushToDashboard(int position) async {
+  //   final _navigationService = locator<NavigationService>();
+  //   return await _navigationService.clearTillFirstAndShowView(HomePage(
+  //     position: position,
+  //   ));
+  // }
 
+  static pushToDashboard(BuildContext context, var position) {
+    Navigator.of(context).pushAndRemoveUntil(
+      CupertinoPageRoute(
+          builder: (BuildContext context) => HomePage(
+                position: position,
+              )),
+      ModalRoute.withName('/LoginPage'),
+    );
+  }
+
+  static showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(text),
+      behavior: SnackBarBehavior.floating,
+    ));
+  }
+
+  static String removeAllHtmlTags(String htmlText) {
+    RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+    return htmlText.replaceAll(exp, '');
+  }
 
   static Future replaceWith(final page, BuildContext context) {
     return Navigator.pushReplacement(
@@ -84,5 +115,34 @@ class Utility {
           builder: (context) => page,
           settings: RouteSettings(name: '${page.runtimeType}')),
     );
+  }
+
+  static String formattedDeviceDate(DateTime dateTime) {
+    // dateTime = dateTime.add(Duration(hours: 5,minutes: 30));
+    return DateFormat('dd/MM/yyyy').format(dateTime);
+  }
+
+  static String pad2(int number) {
+    return (number < 10 ? '0' : '') + number.toString();
+  }
+
+  static String formattedDeviceMonthDate(DateTime dateTime) {
+    // dateTime = dateTime.add(Duration(hours: 5,minutes: 30));
+    return DateFormat('MMM dd, yyyy').format(dateTime);
+  }
+
+  static String formattedServerDate(DateTime dateTime) {
+    // dateTime = dateTime.add(Duration(hours: 5,minutes: 30));
+    return DateFormat('yyyy-MM-dd').format(dateTime);
+  }
+
+  static DateTime parseServerDate(String dateTime) {
+    // dateTime = dateTime.add(Duration(hours: 5,minutes: 30));
+    return DateFormat('yyyy-MM-dd').parse(dateTime);
+  }
+
+  static DateTime parseDeviceDate(String dateTime) {
+    // dateTime = dateTime.add(Duration(hours: 5,minutes: 30));
+    return DateFormat('dd/MM/yyyy').parse(dateTime);
   }
 }

@@ -50,7 +50,7 @@ class CustomSelectWidegt extends StatelessWidget {
                         "${list[index]}",
                         style: TextStyle(
                           color: (list[index] == selectedText)
-                              ? AppColors.orange
+                              ? AppColors.green
                               : AppColors.blackLight,
                         ),
                       ),
@@ -59,7 +59,7 @@ class CustomSelectWidegt extends StatelessWidget {
                         onItemClicked(index);
                       },
                       trailing: (list[index] == selectedText)
-                          ? Icon(Icons.check, color: AppColors.orange)
+                          ? Icon(Icons.check, color: AppColors.green)
                           : Container(
                               width: 0,
                             ))))

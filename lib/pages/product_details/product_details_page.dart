@@ -1,44 +1,136 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app_widget/AppButton.dart';
+import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
 import 'package:lotus_farm/app_widget/AppQtyAddRemoveWidget.dart';
 import 'package:lotus_farm/app_widget/app_product_tile.dart';
+import 'package:lotus_farm/model/product_details_data.dart';
+import 'package:lotus_farm/pages/cart_page/cart_page.dart';
 import 'package:lotus_farm/pages/product_details/product_details_view_model.dart';
+import 'package:lotus_farm/pages/review_page/review_page.dart';
 import 'package:lotus_farm/resources/images/images.dart';
 import 'package:lotus_farm/resources/strings/app_strings.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
 import 'package:lotus_farm/utils/utility.dart';
+import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:stacked/stacked.dart';
 
 class ProductDetailsPage extends StatefulWidget {
-  final int heroTag;
+  final String heroTag;
+  final String productId;
 
-  const ProductDetailsPage({Key key, this.heroTag}) : super(key: key);
+  const ProductDetailsPage({Key key, this.heroTag, this.productId})
+      : super(key: key);
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  _getSliderIndicator(ProductDetailsViewModel model) {
+    return Container(
+        height: 40,
+        color: Colors.transparent,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedSmoothIndicator(
+              activeIndex: model.currentPosition,
+              count: model.productDetailsData.images.length,
+              effect: WormEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  activeDotColor: AppColors.green,
+                  dotColor: AppColors.grey400,
+                  spacing: 6.0),
+            ),
+          ],
+        )
+        //  List.generate(model.bannerList.length, (position) {
+        //   return Container(
+        //     height: 14,
+        //     padding: EdgeInsets.all(3),
+        //     margin: EdgeInsets.all(4),
+        //     decoration: BoxDecoration(
+        //       shape: BoxShape.circle,
+        //       color: (model.currentPosition == position
+        //           ? AppColors.green
+        //           : AppColors.grey400),
+        //     ),
+        //   );
+        // }
+
+        );
+  }
+
   _getProductImage(ProductDetailsViewModel model) {
-    return Hero(
-      tag: widget.heroTag,
-      child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: Spacing.mediumMargin),
-          child: Neumorphic(
-            style: NeumorphicStyle(
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.only(
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12))),
-            ),
-            child: Image.network(
-              "https://b.zmtcdn.com/data/pictures/chains/8/48188/731e244b54f8e8b4df18379ee6e142d2.jpg",
-              height: 300,
-              width: double.maxFinite,
-              fit: BoxFit.cover,
-            ),
-          )),
+    final size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24);
+    final double itemWidth = size.width;
+    return Container(
+      height: 300,
+      width: double.maxFinite,
+      padding: const EdgeInsets.symmetric(horizontal: Spacing.mediumMargin),
+      child: Neumorphic(
+          style: NeumorphicStyle(
+            color: Colors.transparent,
+            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.only(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12))),
+          ),
+          child: (model.productDetailsData.images.length > 0)
+              ? CarouselSlider.builder(
+                  itemCount: model.productDetailsData.images.length,
+                  itemBuilder: (BuildContext context, int index, int value) {
+                    return CachedNetworkImage(
+                      height: 300,
+                      width: double.maxFinite,
+                      imageUrl: model.productDetailsData.images[index].imageUrl,
+                      placeholder: (context, data) {
+                        return Container(
+                          child: new Center(
+                            child: SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: new CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      fit: BoxFit.cover,
+                    );
+                  },
+                  options: CarouselOptions(
+                      autoPlay: false,
+                      enlargeCenterPage: true,
+                      enableInfiniteScroll: false,
+                      viewportFraction: 1.0,
+                      aspectRatio: 1.0,
+                      initialPage: 0,
+                      autoPlayCurve: Curves.linear,
+                      onPageChanged: (index, reason) {
+                        model.onPageChanged(index, reason);
+                      }))
+              : Image.asset(
+                  ImageAsset.noImage,
+                  height: 300,
+                  width: double.maxFinite,
+                  fit: BoxFit.cover,
+                )),
+      //  Image.network(
+      //   "https://b.zmtcdn.com/data/pictures/chains/8/48188/731e244b54f8e8b4df18379ee6e142d2.jpg",
+      //   height: 300,
+      //   width: double.maxFinite,
+      //   fit: BoxFit.cover,
+      // ),
     );
   }
 
@@ -61,7 +153,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   style: TextStyle(
                     color: AppColors.grey400,
                   )),
-                  SizedBox(height:4),
+              SizedBox(height: 4),
               RichText(
                   text: TextSpan(
                       text: AppStrings.rupee,
@@ -71,7 +163,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           fontWeight: FontWeight.normal),
                       children: [
                     TextSpan(
-                        text: "500",
+                        text: "${model.totalAmount}",
                         style: TextStyle(
                             fontSize: 20,
                             color: AppColors.blackLight,
@@ -83,7 +175,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             width: 15,
           ),
           AppQtyAddRemoveWidget(
-            qty: "1",
+            qty: "${model.productDetailsData.qty}",
+            onAddClicked: () {
+              model.addClicked();
+            },
+            onLessClicked: () {
+              model.lessClicked();
+            },
           ),
           SizedBox(
             width: 15,
@@ -92,7 +190,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: AppButtonWidget(
               width: double.maxFinite,
               text: "Add to cart",
-              onPressed: () {},
+              onPressed: () {
+                model.addToCart(
+                    model.productDetailsData.id,
+                    model.productDetailsData.sizes[0].id,
+                    model.productDetailsData.qty, onError: (String text) {
+                  Utility.showSnackBar(context, text);
+                });
+              },
             ),
           )
         ],
@@ -113,14 +218,21 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     fontWeight: FontWeight.normal),
                 children: [
               TextSpan(
-                  text: "500",
+                  text: (double.parse(model.productDetailsData.newPrice))
+                      .toStringAsFixed(0),
                   style: TextStyle(
                       fontSize: 24,
                       color: AppColors.blackLight,
                       fontWeight: FontWeight.bold))
             ])),
         AppQtyAddRemoveWidget(
-          qty: "1",
+          qty: "${model.productDetailsData.qty}",
+          onAddClicked: () {
+            model.addClicked();
+          },
+          onLessClicked: () {
+            model.lessClicked();
+          },
         )
       ],
     );
@@ -128,170 +240,248 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-     var size = MediaQuery.of(context).size;
-     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    var size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 1.55;
+    final appRepo = Provider.of<AppRepo>(context, listen: false);
     return ViewModelBuilder<ProductDetailsViewModel>.reactive(
       viewModelBuilder: () => ProductDetailsViewModel(),
+      onModelReady: (model) {
+        model.initData(widget.productId, appRepo);
+      },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
           actions: [
-            IconButton(icon: SvgPicture.asset(
-              ImageAsset.cartBag,
-              height: 20,
-              width: 20,
-              
-            ), onPressed: (){})
+            Stack(
+              children: [
+                IconButton(
+                    icon: SvgPicture.asset(
+                      ImageAsset.cartBag,
+                      height: 20,
+                      width: 20,
+                    ),
+                    onPressed: () {
+                      Utility.pushToNext(CartPage(), context);
+                    }),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Consumer<AppRepo>(
+                    builder: (_, repo, child) => (repo.cartCount > 0)
+                        ? new Container(
+                            margin: EdgeInsets.only(left: 30),
+                            decoration: BoxDecoration(
+                                color: AppColors.green,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    color: AppColors.green, width: 1.2)),
+                            child: new Container(
+                              padding: EdgeInsets.only(
+                                  top: 4, bottom: 4, left: 4, right: 4),
+                              child: new Text(
+                                '${repo.cartCount}',
+                                style: TextStyle(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.white),
+                              ),
+                            ),
+                          )
+                        : SizedBox(height: 0, width: 0),
+                  ),
+                )
+              ],
+            )
           ],
         ),
         extendBodyBehindAppBar: true,
-        body: Stack(
-          children: [
-            Container(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
+        body: (model.loading)
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : (model.hasError)
+                ? AppErrorWidget(
+                    message: SOMETHING_WRONG_TEXT,
+                    onRetryCliked: () {
+                      model.fetchProductDetails();
+                    })
+                : Stack(
+                    children: [
+                      Container(
                         child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _getProductImage(model),
-                        SizedBox(height: 10),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: Spacing.bigMargin,
-                              vertical: Spacing.bigMargin),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                  textAlign: TextAlign.start,
-                                  textScaleFactor: 1.3,
-                                  text: TextSpan(
-                                      text: "Chicken ",
-                                      style: TextStyle(
-                                          color: AppColors.green,
-                                          fontWeight: FontWeight.bold),
-                                      children: [
-                                        TextSpan(
-                                          text: "Breast",
-                                          style: TextStyle(
-                                              color: AppColors.blackLight,
-                                              fontWeight: FontWeight.normal),
-                                        )
-                                      ])),
-                              SizedBox(height: 5),
-                              Text(
-                                "Boneless",
-                                textScaleFactor: 1.1,
-                                style: TextStyle(color: AppColors.grey600),
-                              ),
-                              SizedBox(height: 10),
-                              _getPriceWithAddBtn(model),
-                              SizedBox(height: 10),
-                              ChickenFeaturesWidget(),
-                              CheckAvailabilityWidget(),
-                              Descriptionwidget(),
-                            ],
-                          ),
-                        ),
-                        ProductTabWidget(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: Spacing.defaultMargin),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: SingleChildScrollView(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  _getProductImage(model),
+                                  SizedBox(height: 5),
+                                  _getSliderIndicator(model),
                                   Container(
-                                    height: 1,
-                                    width: 30,
-                                    color: AppColors.blackLight,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text("View Similar Products",
-                                      textScaleFactor: 0.9,
-                                      style: TextStyle(
-                                          color: AppColors.blackLight,
-                                          fontWeight: FontWeight.bold)),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Container(
-                                    height: 1,
-                                    width: 30,
-                                    color: AppColors.blackLight,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Container(
-                                height: 265,
-                                child: MediaQuery.removeViewPadding(
-                                  context: context,
-                                  removeTop: true,
-                                  child: ListView.builder(
-                                    itemCount: 10,
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    physics: ClampingScrollPhysics(),
-                                    itemBuilder: (_, index) {
-                                      return Container(
-                                        //height: 150,
-                                        width: 200,
-                                        child: Hero(
-                                          tag: "pro$index",
-                                          child: AppProductTile(
-                                            tag:"pro",
-                                            horizontal: Spacing.mediumMargin,
-                                            vertical: Spacing.smallMargin,
-                                            onTileClicked: () {
-                                              Utility.pushToNext(
-                                                  ProductDetailsPage(
-                                                    heroTag: index,
-                                                  ),
-                                                  context);
-                                            },
-                                          ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: Spacing.bigMargin,
+                                        vertical: Spacing.bigMargin),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        RichText(
+                                            textAlign: TextAlign.start,
+                                            textScaleFactor: 1.3,
+                                            text: TextSpan(
+                                                text: "",
+                                                style: TextStyle(
+                                                    color: AppColors.green,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                children: [
+                                                  TextSpan(
+                                                    text: model
+                                                        .productDetailsData
+                                                        .name,
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .blackLight,
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                  )
+                                                ])),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          model.productDetailsData.category,
+                                          textScaleFactor: 1.1,
+                                          style: TextStyle(
+                                              color: AppColors.grey600),
                                         ),
-                                      );
-                                    },
+                                        SizedBox(height: 10),
+                                        _getPriceWithAddBtn(model),
+                                        SizedBox(height: 10),
+                                        ChickenFeaturesWidget(
+                                          data: model.productDetailsData
+                                        ),
+                                        CheckAvailabilityWidget(),
+                                        Descriptionwidget(
+                                          decs: model.productDetailsData.desc,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    )),
+                                  ProductTabWidget(),
+                                  (model.similarList.length > 0)
+                                      ? Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: Spacing.defaultMargin),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    height: 1,
+                                                    width: 30,
+                                                    color: AppColors.blackLight,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Text("View Similar Products",
+                                                      textScaleFactor: 0.9,
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .blackLight,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Container(
+                                                    height: 1,
+                                                    width: 30,
+                                                    color: AppColors.blackLight,
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              Container(
+                                                height: 265,
+                                                child: MediaQuery
+                                                    .removeViewPadding(
+                                                  context: context,
+                                                  removeTop: true,
+                                                  child: ListView.builder(
+                                                    itemCount: model
+                                                        .similarList.length,
+                                                    shrinkWrap: true,
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    physics:
+                                                        ClampingScrollPhysics(),
+                                                    itemBuilder: (_, index) {
+                                                      final product = model
+                                                          .similarList[index];
+                                                      return Container(
+                                                        //height: 150,
+                                                        width: 200,
+                                                        child: Hero(
+                                                          tag: "pro$index",
+                                                          child: AppProductTile(
+                                                            tag: "pro",
+                                                            product: product,
+                                                            horizontal: Spacing
+                                                                .mediumMargin,
+                                                            vertical: Spacing
+                                                                .smallMargin,
+                                                            onTileClicked: () {
+                                                              Utility.pushToNext(
+                                                                  ProductDetailsPage(
+                                                                    heroTag:
+                                                                        "pro$index",
+                                                                    productId:
+                                                                        product
+                                                                            .id,
+                                                                  ),
+                                                                  context);
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Container()
+                                ],
+                              )),
+                            ),
+                            _getBottomAddCart(model),
+                          ],
+                        ),
+                      ),
+                      // Align(
+                      //   alignment: Alignment.topCenter,
+                      //   child: Container(
+                      //     height: Size.fromHeight(70).height,
+                      //     child: AppBar(
+                      //      backgroundColor: Colors.transparent,
+                      //     actions: [
+                      //       // FloatingActionButton(
+                      //       //   onPressed: (){},
+                      //       //   child: Icon(Icons.shopping_bag_outlined,color: AppColors.white,),
+                      //       // )
+                      //     ],
+                      //     ),
+                      //   ),
+                      // )
+                    ],
                   ),
-                  _getBottomAddCart(model),
-                ],
-              ),
-            ),
-            // Align(
-            //   alignment: Alignment.topCenter,
-            //   child: Container(
-            //     height: Size.fromHeight(70).height,
-            //     child: AppBar(
-            //      backgroundColor: Colors.transparent,
-            //     actions: [
-            //       // FloatingActionButton(
-            //       //   onPressed: (){},
-            //       //   child: Icon(Icons.shopping_bag_outlined,color: AppColors.white,),
-            //       // )
-            //     ],
-            //     ),
-            //   ),
-            // )
-          ],
-        ),
       ),
     );
   }
@@ -305,7 +495,7 @@ class ProductTabWidget extends ViewModelWidget<ProductDetailsViewModel> {
   _getTabWidget(ProductDetailsViewModel model) {
     final List<Widget> widgetList = [
       BenifitWidget(),
-      ReviewWidget(),
+      ReviewWidget(model.productDetailsData.reviewData.review),
     ];
     return widgetList[model.tabPosition];
   }
@@ -320,7 +510,7 @@ class ProductTabWidget extends ViewModelWidget<ProductDetailsViewModel> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               CustomTab(
-                title: "Custom Tab",
+                title: "Benifits",
                 active: model.tabPosition == 0,
                 onTapClicked: () {
                   model.setTabPosition(0);
@@ -335,7 +525,7 @@ class ProductTabWidget extends ViewModelWidget<ProductDetailsViewModel> {
               ),
             ],
           ),
-          SizedBox(height:20),
+          SizedBox(height: 20),
           _getTabWidget(model),
         ],
       ),
@@ -344,98 +534,128 @@ class ProductTabWidget extends ViewModelWidget<ProductDetailsViewModel> {
 }
 
 class ReviewWidget extends StatelessWidget {
-  const ReviewWidget({
+  const ReviewWidget(
+    this.reviewList, {
     Key key,
+    this.showMore = true,
+    this.setLimit = true,
   }) : super(key: key);
+  final List<Review> reviewList;
+  final bool showMore;
+  final bool setLimit;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Spacing.mediumMargin),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MediaQuery.removePadding(
-            context: context,
-      removeTop: true,
-            child: ListView.separated(
-                itemCount: 3,
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                separatorBuilder: (_, index) => Container(
-                      height: 8,
-                    ),
-                itemBuilder: (_, index) => Neumorphic(
-                      style: NeumorphicStyle(color: AppColors.white),
-                      child: Container(
-                        child: ListTile(
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: (reviewList.length > 0)
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: ListView.separated(
+                      itemCount: (setLimit)
+                          ? (reviewList.length > 5)
+                              ? 5
+                              : reviewList.length
+                          : reviewList.length,
+                      shrinkWrap: true,
+                      physics: ClampingScrollPhysics(),
+                      separatorBuilder: (_, index) => Container(
+                            height: 8,
+                          ),
+                      itemBuilder: (_, index) {
+                        final review = reviewList[index];
+                        return Neumorphic(
+                          style: NeumorphicStyle(color: AppColors.white),
+                          child: Container(
+                            child: ListTile(
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  RichText(
-                                    text: TextSpan(
-                                        text: "Nagendra Prajapati",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.blackLight,
-                                            fontWeight: FontWeight.bold),
-                                        children: [
-                                          //  TextSpan(
-                                          //   text: "  as on 10/03/2021" ,
-                                          //   style: TextStyle(fontSize: 10,color: AppColors.grey600,fontWeight: FontWeight.normal ),
-                                          //  )
-                                        ]),
-                                  ),
                                   Row(
-                                    children: List.generate(
-                                        3,
-                                        (index) => Icon(
-                                              Icons.star,
-                                              size: 12,
-                                              color: AppColors.green,
-                                            )),
-                                  )
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      RichText(
+                                        text: TextSpan(
+                                            text: review.userName,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: AppColors.blackLight,
+                                                fontWeight: FontWeight.bold),
+                                            children: [
+                                              //  TextSpan(
+                                              //   text: "  as on 10/03/2021" ,
+                                              //   style: TextStyle(fontSize: 10,color: AppColors.grey600,fontWeight: FontWeight.normal ),
+                                              //  )
+                                            ]),
+                                      ),
+                                      Row(
+                                        children: List.generate(
+                                            review.rating,
+                                            (index) => Icon(
+                                                  Icons.star,
+                                                  size: 12,
+                                                  color: AppColors.green,
+                                                )),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: 3),
+                                  Text("as on ${review.date}",
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color: AppColors.grey600,
+                                          fontWeight: FontWeight.normal)),
+                                  SizedBox(height: 8)
                                 ],
                               ),
-                              SizedBox(height:3),
-                              Text("as on 10/03/2021",
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppColors.grey600,
-                                      fontWeight: FontWeight.normal)),
-                              SizedBox(height: 8)
-                            ],
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: Spacing.defaultMargin,
+                                  vertical: Spacing.halfSmallMargin),
+                              subtitle: Text("${review.review}"),
+                            ),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: Spacing.defaultMargin,
-                              vertical: Spacing.halfSmallMargin),
-                          subtitle: Text("very decilious checiken !!!"),
-                        ),
-                      ),
-                    )),
-          ),
-          TextButton(
-              onPressed: () {},
-              child: Text(
-                "see all reviews",
-                textAlign: TextAlign.center,
-              )),
-        ],
-      ),
+                        );
+                      }),
+                ),
+                Visibility(
+                  visible: showMore,
+                  child: TextButton(
+                      onPressed: () {
+                        Utility.pushToNext(
+                            ReviewPage(
+                              reviewList: reviewList,
+                            ),
+                            context);
+                      },
+                      child: Text(
+                        "see all reviews",
+                        textAlign: TextAlign.center,
+                      )),
+                ),
+              ],
+            )
+          : Center(
+              child: Text("No Reviews found",
+                  style: TextStyle(
+                    color: AppColors.grey700,
+                    fontSize: 12,
+                  ))),
     );
   }
 }
 
-class BenifitWidget extends StatelessWidget {
+class BenifitWidget extends ViewModelWidget<ProductDetailsViewModel> {
   const BenifitWidget({
     Key key,
-  }) : super(key: key);
+  }) : super(key: key, reactive: true);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ProductDetailsViewModel model) {
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
@@ -443,7 +663,7 @@ class BenifitWidget extends StatelessWidget {
         shrinkWrap: true,
         gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, childAspectRatio: 0.9),
-        itemCount: 6,
+        itemCount: model.benifitText.length,
         physics: ClampingScrollPhysics(),
         itemBuilder: (context, index) {
           return Container(
@@ -461,17 +681,21 @@ class BenifitWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.leaderboard,
-                      color: AppColors.green,
-                      size: 34,
+                    SvgPicture.asset(
+                      model.benifitImages[index],
+                      height: 40,
                     ),
+                    // Icon(
+                    //   Icons.leaderboard,
+                    //   color: AppColors.green,
+                    //   size: 34,
+                    // ),
                     SizedBox(height: 10),
                     Row(
                       children: [
                         Expanded(
                             child: Text(
-                          "Fresh with nurition intact",
+                          model.benifitText[index],
                           textAlign: TextAlign.center,
                           textScaleFactor: 0.8,
                         )),
@@ -520,7 +744,9 @@ class CustomTab extends StatelessWidget {
 class Descriptionwidget extends StatelessWidget {
   const Descriptionwidget({
     Key key,
+    this.decs,
   }) : super(key: key);
+  final decs;
 
   @override
   Widget build(BuildContext context) {
@@ -538,10 +764,11 @@ class Descriptionwidget extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: Text(
-                      "Chicken Breast is one of the meatier cuts of a Chicken, which comes from the breast-bone of the bird. This cut is skinless and has a supple texture. A good source of vitamins and minerals, Chicken Breast, is also a great choice for a lean protein diet. Apply a flavourful spice-rub and pan-fry, bake, grill, or slow-cook the Chicken Breast to relish this versatile cut. Order fresh Chicken Breast online from Licious and get it home-delivered.",
-                      textScaleFactor: 0.8,
-                      style: TextStyle(color: AppColors.grey600)))
+                  child:
+                      // Html(data: decs),
+                      Text(decs,
+                          textScaleFactor: 0.8,
+                          style: TextStyle(color: AppColors.grey600)))
             ],
           )
         ],
@@ -560,9 +787,7 @@ class CheckAvailabilityWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: Spacing.defaultMargin),
       child: Neumorphic(
-        style:NeumorphicStyle(
-          color:AppColors.tileColor
-        ) ,
+        style: NeumorphicStyle(color: AppColors.tileColor),
         child: Column(
           children: [
             Container(
@@ -613,7 +838,10 @@ class CheckAvailabilityWidget extends StatelessWidget {
 class ChickenFeaturesWidget extends StatelessWidget {
   const ChickenFeaturesWidget({
     Key key,
+    this.data,
   }) : super(key: key);
+
+  final ProductDetailsData data;
 
   @override
   Widget build(BuildContext context) {
@@ -623,8 +851,14 @@ class ChickenFeaturesWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: FeatureTile()),
-              Expanded(child: FeatureTile())
+              Expanded(
+                  child: FeatureTile(
+                    image: ImageAsset.no_of_pieces,
+                title: "No of Pieces ${data.piece}",
+              )),
+              Expanded(child: FeatureTile(
+                 image: ImageAsset.gross_wt,
+                title: "Gross Wt. ${data.grossWeight}"))
             ],
           ),
           SizedBox(
@@ -632,8 +866,16 @@ class ChickenFeaturesWidget extends StatelessWidget {
           ),
           Row(
             children: [
-              Expanded(child: FeatureTile()),
-              Expanded(child: FeatureTile())
+              Expanded(
+                  child: FeatureTile(
+                     image: ImageAsset.serves,
+                title: "Serves ${data.serves}",
+              )),
+              Expanded(
+                  child: FeatureTile(
+                     image: ImageAsset.net_wt,
+                title: "Net Wt. ${data.netWeight}",
+              ))
             ],
           ),
         ],
@@ -645,25 +887,31 @@ class ChickenFeaturesWidget extends StatelessWidget {
 class FeatureTile extends StatelessWidget {
   const FeatureTile({
     Key key,
+    this.image,
+    this.title,
   }) : super(key: key);
+
+  final image;
+  final title;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          Icons.local_drink_outlined,
-          color: AppColors.green,
-          size: 18,
+        SvgPicture.asset(image,
+        height: 22,
         ),
+        // Icon(
+        //   Icons.local_drink_outlined,
+        //   color: AppColors.green,
+        //   size: 18,
+        // ),
         SizedBox(width: 8),
         Text(
-          "No. of Piceess 6-8",
+          title,
           textScaleFactor: 0.8,
         )
       ],
     );
   }
 }
-
-

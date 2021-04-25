@@ -7,6 +7,7 @@ import 'package:lotus_farm/pages/account_page/account_view_model.dart';
 import 'package:lotus_farm/resources/images/images.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
+import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
 
 class AccountPage extends StatefulWidget {
@@ -78,6 +79,9 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return ViewModelBuilder<AccountViewModel>.reactive(
       viewModelBuilder: () => AccountViewModel(),
+      onModelReady: (model) {
+        model.initData();
+      },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(
@@ -98,7 +102,6 @@ class _AccountPageState extends State<AccountPage> {
                         horizontal: Spacing.defaultMargin),
                     style: NeumorphicStyle(
                         color: AppColors.tileColor,
-                       
                         boxShape: NeumorphicBoxShape.circle()),
                     child: SizedBox(
                       height: 130,
@@ -116,6 +119,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
                 SizedBox(height: 20),
                 AppNeumorpicTextFeild(
+                  controller: model.firstNameController,
                   hintText: "First Name",
                   onChanged: (e) {},
                   onSubmit: (e) {},
@@ -123,6 +127,7 @@ class _AccountPageState extends State<AccountPage> {
                   icon: Icons.person_outline,
                 ),
                 AppNeumorpicTextFeild(
+                  controller: model.lastNameController,
                   hintText: "Last Name",
                   onChanged: (e) {},
                   onSubmit: (e) {},
@@ -130,34 +135,41 @@ class _AccountPageState extends State<AccountPage> {
                   icon: Icons.person_outline,
                 ),
                 AppNeumorpicTextFeild(
+                  controller: model.numberController,
                   hintText: "Mobile Number",
                   onChanged: (e) {},
                   onSubmit: (e) {},
+                  enabled: false,
                   textInputType: TextInputType.name,
                   icon: Icons.call_outlined,
                 ),
                 AppNeumorpicTextFeild(
+                  controller: model.emailController,
                   hintText: "Email Id",
                   onChanged: (e) {},
                   onSubmit: (e) {},
+                  enabled: false,
                   textInputType: TextInputType.name,
                   icon: Icons.email_outlined,
                 ),
                 AppNeumorpicTextFeild(
-                  hintText: "City",
-                  onChanged: (e) {},
-                  onSubmit: (e) {},
-                  textInputType: TextInputType.name,
-                  icon: Icons.location_city_outlined
-                ),
-                SizedBox(height:15),
+                    hintText: "City",
+                    controller: model.cityController,
+                    onChanged: (e) {},
+                    onSubmit: (e) {},
+                    textInputType: TextInputType.name,
+                    icon: Icons.location_city_outlined),
+                SizedBox(height: 15),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: Spacing.defaultMargin),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: Spacing.defaultMargin),
                   child: AppButtonWidget(
                     text: "Submit",
                     width: double.maxFinite,
-                    onPressed: (){
-                      
+                    onPressed: () {
+                      model.updateProfile(onError: (String text) {
+                        Utility.showSnackBar(context, text);
+                      });
                     },
                   ),
                 )

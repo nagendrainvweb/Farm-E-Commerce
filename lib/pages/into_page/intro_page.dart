@@ -2,8 +2,10 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lotus_farm/pages/home_page/home_page.dart';
 import 'package:lotus_farm/pages/into_page/intro_view_model.dart';
 import 'package:lotus_farm/pages/login_page/login_page.dart';
+import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/resources/images/images.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
@@ -39,11 +41,13 @@ class _IntroPageState extends State<IntroPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SvgPicture.asset(ImageAsset.delivery_chicken,
-                            height: 250,),
-                            SizedBox(height:40),
+                            SvgPicture.asset(
+                              ImageAsset.delivery_chicken,
+                              height: 250,
+                            ),
+                            SizedBox(height: 40),
                             RichText(
-                              textScaleFactor: 1.5,
+                                textScaleFactor: 1.5,
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
                                     text: "Get Fresh",
@@ -85,20 +89,18 @@ class _IntroPageState extends State<IntroPage> {
                       children: [
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children:[
+                            children: [
                               AnimatedSmoothIndicator(
-                              activeIndex: model.currentPage,
-                              count: 2,
-                              effect: WormEffect(
-                                dotHeight: 10,
-                                dotWidth: 10,
-                                activeDotColor: AppColors.green,
-                                dotColor: AppColors.grey500,
-                                spacing: 6.0
-
-                              ),
-                            )
-                            ] 
+                                activeIndex: model.currentPage,
+                                count: 2,
+                                effect: WormEffect(
+                                    dotHeight: 10,
+                                    dotWidth: 10,
+                                    activeDotColor: AppColors.green,
+                                    dotColor: AppColors.grey500,
+                                    spacing: 6.0),
+                              )
+                            ]
                             // List.generate(
                             //     2,
                             //     (index) => Row(
@@ -133,8 +135,9 @@ class _IntroPageState extends State<IntroPage> {
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: TextButton(
-                      onPressed: () {
-                        Utility.pushToNext(LoginPage(), context);
+                      onPressed: () async {
+                        await Prefs.setIntroDone(true);
+                        Utility.pushToNext(HomePage(), context);
                       },
                       child: Text("NEXT")),
                 ),

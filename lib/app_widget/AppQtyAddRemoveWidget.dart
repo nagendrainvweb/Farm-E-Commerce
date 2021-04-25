@@ -9,14 +9,15 @@ class AppQtyAddRemoveWidget extends StatelessWidget {
     this.iconLeftPadding = true,
     this.iconRightPadding = true,
     this.textHorizontalPadding = 10,
-    this.textVerticalPadding =8 ,
-    this.qty,
+    this.textVerticalPadding = 8,
+    this.qty, this.onAddClicked, this.onLessClicked,
   }) : super(key: key);
 
   final double iconSize;
   final String qty;
-  final double textScaleRefactor, textHorizontalPadding,textVerticalPadding;
+  final double textScaleRefactor, textHorizontalPadding, textVerticalPadding;
   final bool iconLeftPadding, iconRightPadding;
+  final Function onAddClicked,onLessClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +27,17 @@ class AppQtyAddRemoveWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(6), color: AppColors.green),
       child: Row(
         children: [
-          Visibility(
-            visible: iconLeftPadding,
-            child: SizedBox(width: 5)),
+          Visibility(visible: iconLeftPadding, child: SizedBox(width: 5)),
           IconButton(
               icon: Icon(Icons.remove),
               color: AppColors.white,
               visualDensity: VisualDensity.compact,
               iconSize: iconSize,
-              onPressed: () {}),
+              onPressed: onLessClicked),
           Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: textHorizontalPadding, vertical: textVerticalPadding),
+                horizontal: textHorizontalPadding,
+                vertical: textVerticalPadding),
             child: Text(qty,
                 textScaleFactor: textScaleRefactor,
                 style: TextStyle(
@@ -48,10 +48,8 @@ class AppQtyAddRemoveWidget extends StatelessWidget {
               color: AppColors.white,
               visualDensity: VisualDensity.compact,
               iconSize: iconSize,
-              onPressed: () {}),
-          Visibility(
-             visible: iconLeftPadding,
-            child: SizedBox(width: 5)),
+              onPressed: onAddClicked),
+          Visibility(visible: iconLeftPadding, child: SizedBox(width: 5)),
         ],
       ),
     );

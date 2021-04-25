@@ -8,7 +8,7 @@ class BasicResponse<T>{
   var code;
   var message;
   var isUpdate;
-  String cartCount;
+  int cartCount;
   String isForce;
   String pageContent;
   String pageName;
@@ -27,7 +27,7 @@ class BasicResponse<T>{
       status: json[Constants.STATUS],
       code: json[Constants.CODE],
       message: json[Constants.MESSAGE],
-      cartCount: json['cartcount'].toString(),
+      cartCount: json['cart_count'],
       isUpdate : json['isUpdate'],
       pageContent : json["page_content"],
       pageName: json["page_name"],

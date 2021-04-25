@@ -23,7 +23,7 @@ class AppAmountWidget extends StatelessWidget {
                 fontWeight: FontWeight.normal),
             children: [
           TextSpan(
-              text: amount,
+              text: "$amount",
               style: TextStyle(
                   fontSize: 18,
                   color: amountColor,

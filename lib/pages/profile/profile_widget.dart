@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/pages/account_page/account_page.dart';
 import 'package:lotus_farm/pages/address_page/address_page.dart';
 import 'package:lotus_farm/pages/order_page/order_page.dart';
 import 'package:lotus_farm/pages/profile/profile_view_model.dart';
+import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/resources/images/images.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
+import 'package:lotus_farm/utils/dialog_helper.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class ProfileWidget extends StatefulWidget {
   @override
@@ -44,7 +48,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     ),
                   ),
                   SizedBox(width: 20),
-                  Text("Nagendra Prajapati",
+                  Text(model.name,
                       textScaleFactor: 1.1,
                       style: TextStyle(color: AppColors.blackGrey))
                 ],
@@ -53,8 +57,13 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             Align(
               alignment: Alignment.topRight,
               child: InkWell(
-                onTap: () {
-                  Utility.pushToNext(AccountPage(), context);
+                onTap: () async {
+                  final value =
+                      await Utility.pushToNext(AccountPage(), context);
+                  if (value ?? false) {
+                    Utility.showSnackBar(
+                        context, "profile Updated Successfully");
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.all(12),
@@ -79,6 +88,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ProfileViewModel>.reactive(
       viewModelBuilder: () => ProfileViewModel(),
+      onModelReady: (model) {
+        model.initData();
+      },
       builder: (_, model, child) => SingleChildScrollView(
         child: DefaultTextStyle(
           style: TextStyle(color: AppColors.blackGrey),
@@ -113,6 +125,15 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               ProfileTile(
                 title: "Support Center",
                 onTap: () {},
+              ),
+              ProfileTile(
+                title: "Logout",
+                onTap: () {
+                  DialogHelper.showLogoutDialog(context, () async {
+                    await Prefs.clear();
+                    Utility.pushToDashboard(context,2);
+                  });
+                },
               ),
             ],
           ),

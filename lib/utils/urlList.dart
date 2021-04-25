@@ -15,6 +15,7 @@ class UrlList {
   static final FETCH_PRODUCTS = BASE_URL + "productlist.php";
   static final FETCH_PRODUCTS_BY_TYPE = BASE_URL + "getDashboardDetails.php";
   static final FETCH_DASHBOARD = BASE_URL + "getDashboardData.php";
+  static final FETCH_ALL_PRODICTS = BASE_URL + "getAllProductList.php";
   static final FETCH_WISHLIST = BASE_URL + "getWishlist.php";
   static final ADD_WISHLIST = BASE_URL + "addWishlist.php";
   static final DELETE_WISHLIST = BASE_URL + "delWishlist.php";
@@ -52,6 +53,8 @@ class UrlList {
   static final FETCH_POLICIES = BASE_URL+"getCMSPages.php";
   static final CHECK_UPDATE = BASE_URL+"checkUpdate.php";
   static final REGISTER_TOKEN = BASE_URL+"updateFcmToken.php";
+  static final STORE_LIST = BASE_URL+"getStoresList.php";
+
 
   static final FETCH_PINCODE = "https://api.postalpincode.in/pincode/";
 }

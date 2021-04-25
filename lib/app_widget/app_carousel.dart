@@ -15,7 +15,6 @@ class AppCarousel extends StatefulWidget {
 }
 
 class _AppCarouselState extends State<AppCarousel> {
-
   @override
   void dispose() {
     super.dispose();
@@ -23,20 +22,19 @@ class _AppCarouselState extends State<AppCarousel> {
 
   @override
   Widget build(BuildContext context) {
-        var size = MediaQuery.of(context).size;
+    var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
     return Container(
-      color: Colors.white,
+      //color: Colors.white,
       child: Stack(
         fit: StackFit.loose,
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width,
-            
-            height: 180,
+            height: 220,
             child: CarouselSlider(
               options: CarouselOptions(
                   autoPlay: widget.autoScroll,
@@ -60,11 +58,14 @@ class _AppCarouselState extends State<AppCarousel> {
                       //myPrint(imageList.length);
                     },
                     child: Neumorphic(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: Spacing.defaultMargin,
+                          vertical: Spacing.defaultMargin),
                       style: NeumorphicStyle(
-                          //shape: NeumorphicShape.concave,
-                          boxShape: NeumorphicBoxShape.roundRect(
-                              BorderRadius.circular(12)),
-                          ),
+                        //shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                      ),
                       child: CachedNetworkImage(
                         width: double.maxFinite,
                         height: double.maxFinite,

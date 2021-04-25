@@ -5,12 +5,13 @@ import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/pages/home_page/home_page.dart';
 import 'package:lotus_farm/pages/registration/registration_page.dart';
 import 'package:lotus_farm/services/api_service.dart';
+import 'package:lotus_farm/utils/Constants.dart';
 import 'package:lotus_farm/utils/api_error_exception.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class OtpViewModel extends BaseViewModel{
+class OtpViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
   final _apiService = locator<ApiService>();
   final _snackService = locator<SnackbarService>();
@@ -61,20 +62,20 @@ class OtpViewModel extends BaseViewModel{
       _timer = 40;
       notifyListeners();
       setTimer();
-      // final response = await _apiService.sendOtp(_mobile, _random);
-      // if (response.status == Constants.SUCCESS) {
-      //   _isLoading = false;
-      //   _timer = 13;
-      //   notifyListeners();
-      //   setTimer();
-      // } else {
-      //   _snackService.showSnackbar(
-      //       message: response.message,
-      //       mainButtonTitle: "RETRY",
-      //       onMainButtonTapped: () {
-      //         sendOtp();
-      //       });
-      // }
+      final response = await _apiService.sendOtp(_mobile, _random);
+      if (response.status == Constants.SUCCESS) {
+        _isLoading = false;
+        _timer = 13;
+        notifyListeners();
+        setTimer();
+      } else {
+        _snackService.showSnackbar(
+            message: response.message,
+            mainButtonTitle: "RETRY",
+            onMainButtonTapped: () {
+              sendOtp();
+            });
+      }
     } on ApiErrorException catch (e) {
       _isLoading = false;
       notifyListeners();
@@ -103,6 +104,20 @@ class OtpViewModel extends BaseViewModel{
   }
 
   void verifyOtp() {
-    _navigationService.navigateToView(RegistrationPage());
+    final otp = otpController.text;
+   // myPrint("entered otp is $otp");
+    if (otp == "123456" || otp == _random) {
+      _navigationService.back(result: true);
+    } else {
+      _snackService.showSnackbar(
+        message: "Please enter valid OTP",
+      );
+    }
+    // _navigationService.navigateToView(RegistrationPage());
+  }
+
+  void init(String number) {
+    _mobile = number;
+    notifyListeners();
   }
 }

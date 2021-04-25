@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:lotus_farm/model/basic_response.dart';
 import 'package:lotus_farm/prefrence_util/Prefs.dart';
+import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'dialog_inset_defeat.dart';
 
@@ -38,13 +39,13 @@ class DialogHelper{
                    mainAxisAlignment: MainAxisAlignment.end,
                    children: <Widget>[
                      FlatButton(
-                       child: Text('CANCEL',style: TextStyle(fontSize: 12,color: CustomColor.kredColor,fontWeight: FontWeight.w700),),
+                       child: Text('CANCEL',style: TextStyle(fontSize: 12,color: AppColors.green,fontWeight: FontWeight.w700),),
                        onPressed:(){
                          Navigator.pop(context);
                        } ,
                      ),
                      FlatButton(
-                       child: Text(positiveBtnText,style: TextStyle(fontSize: 12,color: CustomColor.kredColor,fontWeight: FontWeight.w700,),),
+                       child: Text(positiveBtnText,style: TextStyle(fontSize: 12,color: AppColors.green,fontWeight: FontWeight.w700,),),
                        onPressed:positiveClick ,
                      ),
                      SizedBox(width: 5,),

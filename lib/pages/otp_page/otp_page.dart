@@ -8,6 +8,9 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:stacked/stacked.dart';
 
 class OtpPage extends StatefulWidget {
+  final String number;
+
+  const OtpPage({Key key, this.number}) : super(key: key);
   @override
   _OtpPageState createState() => _OtpPageState();
 }
@@ -18,6 +21,7 @@ class _OtpPageState extends State<OtpPage> {
     return ViewModelBuilder<OtpViewModel>.reactive(
       viewModelBuilder: () => OtpViewModel(),
       onModelReady: (model) {
+        model.init(widget.number);
         model.sendOtp();
       },
       builder: (_, model, child) => Scaffold(
@@ -39,6 +43,7 @@ class _OtpPageState extends State<OtpPage> {
                     SizedBox(height: 20),
                     PinCodeTextField(
                       length: 6,
+                      controller: model.otpController,
                       obscureText: false,
                       animationType: AnimationType.fade,
                       pinTheme: PinTheme(
@@ -83,26 +88,33 @@ class _OtpPageState extends State<OtpPage> {
                       width: double.maxFinite,
                     ),
                     SizedBox(height: 30),
-                    Visibility(
-                        visible: model.timer != 0,
-                        child: Text("00:${model.timer}")),
-                    Visibility(
-                        visible: model.timer == 0,
-                        child: TextButton(
-                            onPressed: () {
-                              model.sendOtp();
-                            },
-                            child: RichText(
-                                text: TextSpan(
-                                    text: "Don't receive a code?",
-                                    style: TextStyle(color: AppColors.grey500),
-                                    children: [
-                                  TextSpan(
-                                    text: " Resend",
-                                    style:
-                                        TextStyle(color: AppColors.blackLight),
-                                  )
-                                ])))),
+                    (model.isLoading)
+                        ? CircularProgressIndicator()
+                        : Column(
+                            children: [
+                              Visibility(
+                                  visible: model.timer != 0,
+                                  child: Text("00:${model.timer}")),
+                              Visibility(
+                                  visible: model.timer == 0,
+                                  child: TextButton(
+                                      onPressed: () {
+                                        model.sendOtp();
+                                      },
+                                      child: RichText(
+                                          text: TextSpan(
+                                              text: "Don't receive a code?",
+                                              style: TextStyle(
+                                                  color: AppColors.grey500),
+                                              children: [
+                                            TextSpan(
+                                              text: " Resend",
+                                              style: TextStyle(
+                                                  color: AppColors.blackLight),
+                                            )
+                                          ])))),
+                            ],
+                          ),
                   ],
                 ),
                 SizedBox(height: 20),

@@ -8,6 +8,7 @@ const STATUS_CHECKSUM_FAILED = "STATUS_CHECKSUM_FAILED";
 
 class Constants {
   static final RUPEE = "₹";
+  static final AUTH = "authorization";
   static final INTRO_DONE = "intro_done";
   static final SUBSCRIPTION = "subscription";
   static final SKIP_LOGIN = "skip_login";
@@ -35,6 +36,7 @@ class Constants {
   static final ADDRESS = "address";
   static final EMAIl = "email";
   static final FCM_TOKEN = "fcm_token";
+  static final PROFILEPIC = "Profile_pic";
   static final CATEGORY_ID = "category_id";
   static final PRODUCT_ID = "product_id";
   static final AUTORIZATION = "Autorization";
