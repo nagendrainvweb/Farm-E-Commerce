@@ -17,10 +17,11 @@ import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/services/base_request.dart';
 import 'package:lotus_farm/extension/extensions.dart';
 import 'package:http/http.dart' as http;
-import 'package:lotus_farm/utils/Constants.dart';
 import 'package:lotus_farm/utils/api_error_exception.dart';
 import 'package:lotus_farm/utils/urlList.dart';
 import 'package:lotus_farm/utils/utility.dart';
+
+import '../utils/constants.dart';
 
 class ApiService extends BaseRequest {
   Future<BasicResponse<String>> sendOtp(mobile, otp) async {

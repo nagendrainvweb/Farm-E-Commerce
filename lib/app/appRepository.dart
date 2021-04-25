@@ -9,8 +9,9 @@ import 'package:lotus_farm/model/state_data.dart';
 import 'package:lotus_farm/model/storeData.dart';
 import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/services/api_service.dart';
-import 'package:lotus_farm/utils/Constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
+
+import '../utils/constants.dart';
 
 class AppRepo extends ChangeNotifier {
   final _apiService = locator<ApiService>();

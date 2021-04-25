@@ -3,10 +3,11 @@ import 'package:lotus_farm/app/app_helper.dart';
 import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/services/api_service.dart';
-import 'package:lotus_farm/utils/Constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+
+import '../../utils/constants.dart';
 
 class AccountViewModel extends BaseViewModel with AppHelper {
   final firstNameController = TextEditingController();

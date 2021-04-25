@@ -5,7 +5,7 @@ import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/pages/home_page/home_page.dart';
 import 'package:lotus_farm/pages/registration/registration_page.dart';
 import 'package:lotus_farm/services/api_service.dart';
-import 'package:lotus_farm/utils/Constants.dart';
+import '../../utils/constants.dart';
 import 'package:lotus_farm/utils/api_error_exception.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';

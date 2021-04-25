@@ -9,7 +9,7 @@ import 'package:lotus_farm/pages/otp_page/otp_page.dart';
 import 'package:lotus_farm/pages/registration/registration_page.dart';
 import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/services/api_service.dart';
-import 'package:lotus_farm/utils/Constants.dart';
+import '../../utils/constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';

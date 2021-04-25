@@ -10,7 +10,7 @@ import 'package:lotus_farm/pages/addEditAddressPage/addEditAddressPage.dart';
 import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/resources/strings/app_strings.dart';
 import 'package:lotus_farm/services/api_service.dart';
-import 'package:lotus_farm/utils/Constants.dart';
+import '../../utils/constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:stacked/stacked.dart';

@@ -4,7 +4,7 @@ import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/model/product_data.dart';
 import 'package:lotus_farm/pages/check_out/check_out_page.dart';
 import 'package:lotus_farm/services/api_service.dart';
-import 'package:lotus_farm/utils/Constants.dart';
+import '../../utils/constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
