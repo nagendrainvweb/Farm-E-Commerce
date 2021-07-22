@@ -84,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                           Expanded(
                               child: TextField(
                             controller: model.numberController,
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.only(

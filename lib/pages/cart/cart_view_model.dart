@@ -74,7 +74,7 @@ class CartViewModel extends BaseViewModel with AppHelper {
     }
   }
 
-  void checkOutClicked({Function onMessage}) async {
+  void checkOutClicked({Function onMessage, Function onCallback}) async {
     showProgressDialogService("Please wait...");
     try {
       int totalAmount = 0;
@@ -85,11 +85,12 @@ class CartViewModel extends BaseViewModel with AppHelper {
           await _apiService.updateCart(cartList, "", totalAmount.toString());
       hideProgressDialogService();
       if (response.status == Constants.SUCCESS) {
-        _navigationService.navigateToView(CheckoutPage(
+        final value = await _navigationService.navigateToView(CheckoutPage(
           totalAmount: response.data.totalAmount,
           payingAmount: response.data.payingAmount.toString(),
           discountAmount: "0",
         ));
+        onCallback();
       } else {
         onMessage(response.message);
       }

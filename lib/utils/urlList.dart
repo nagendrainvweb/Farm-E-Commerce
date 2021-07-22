@@ -16,6 +16,7 @@ class UrlList {
   static final FETCH_PRODUCTS_BY_TYPE = BASE_URL + "getDashboardDetails.php";
   static final FETCH_DASHBOARD = BASE_URL + "getDashboardData.php";
   static final FETCH_ALL_PRODICTS = BASE_URL + "getAllProductList.php";
+  static final PRE_ORDER_LIST = BASE_URL + "productlist_preorder.php";
   static final FETCH_WISHLIST = BASE_URL + "getWishlist.php";
   static final ADD_WISHLIST = BASE_URL + "addWishlist.php";
   static final DELETE_WISHLIST = BASE_URL + "delWishlist.php";

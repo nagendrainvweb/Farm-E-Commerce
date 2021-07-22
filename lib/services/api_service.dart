@@ -6,6 +6,7 @@ import 'package:lotus_farm/model/address_data.dart';
 import 'package:lotus_farm/model/basic_response.dart';
 import 'package:lotus_farm/model/dashboard_data.dart';
 import 'package:lotus_farm/model/offerResponse.dart';
+import 'package:lotus_farm/model/order_details_data.dart';
 import 'package:lotus_farm/model/pastOrderData.dart';
 import 'package:lotus_farm/model/product_data.dart';
 import 'package:lotus_farm/model/product_details_data.dart';
@@ -187,11 +188,40 @@ class ApiService extends BaseRequest {
       throw Exception(e.toString());
     }
   }
+  
 
   Future<BasicResponse<List<Product>>> fetchAllProducts() async {
     try {
       final request = await http.post(
         UrlList.FETCH_ALL_PRODICTS,
+      );
+      myPrint(request.body);
+      final jsonResponse = json.decode(request.body);
+      final data = jsonResponse[UrlConstants.DATA];
+      final response =
+          BasicResponse<List<Product>>.fromJson(json: jsonResponse);
+      final List<Product> productList = [];
+      if (response.status == Constants.SUCCESS) {
+        final items = data["items"];
+        for (var map in items) {
+          productList.add(Product.fromJson(map));
+        }
+        response.data = productList;
+        return response;
+      } else {
+        throw Exception(jsonResponse["message"]);
+      }
+    } on SocketException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+    Future<BasicResponse<List<Product>>> fetchPreOrderList() async {
+    try {
+      final request = await http.post(
+        UrlList.PRE_ORDER_LIST,
       );
       myPrint(request.body);
       final jsonResponse = json.decode(request.body);
@@ -317,6 +347,7 @@ class ApiService extends BaseRequest {
     try {
       final result = await http.post(UrlList.FETCH_ADDRESSES,
           headers: await _getHeader(), body: postJson);
+      myPrint(result.body);
       final response = json.decode(result.body);
       final basicResponse =
           BasicResponse<List<AddressData>>.fromJson(json: response);
@@ -327,6 +358,8 @@ class ApiService extends BaseRequest {
           data.forEach((v) {
             final data = new AddressData.fromJson(v);
             if (data.state != null && data.pincode != null) {
+              myPrint("lat ${data.latitude}");
+              myPrint("lng ${data.longitude}");
               items.add(new AddressData.fromJson(v));
             }
           });
@@ -366,6 +399,34 @@ class ApiService extends BaseRequest {
           });
         }
         basicResponse.data = items;
+      }
+      return basicResponse;
+    } on SocketException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<BasicResponse<OrderDetailsData>> fetchOrderDetails(
+      String orderId) async {
+    final userId = await Prefs.userId;
+    final commonFeilds = _getCommonFeild();
+    final postJson = {"user_id": '$userId', "order_id": "$orderId"};
+    postJson.addAll(commonFeilds);
+    myPrint(postJson.toString());
+    try {
+      final result = await http.post(UrlList.FETCH_ORDER_DETAILS,
+          headers: await _getHeader(), body: postJson);
+      myPrint(result.body);
+      final response = json.decode(result.body);
+      final basicResponse =
+          BasicResponse<OrderDetailsData>.fromJson(json: response);
+      if (basicResponse.status == Constants.SUCCESS) {
+        var data = response["data"];
+        basicResponse.data = data;
+      } else {
+        throw Exception(basicResponse..message);
       }
       return basicResponse;
     } on SocketException catch (e) {
@@ -682,6 +743,124 @@ class ApiService extends BaseRequest {
       throw ApiErrorException(NO_INTERNET_CONN);
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  Future<BasicResponse<Map<String, dynamic>>> placeOrder(
+      String billingAddressId,
+      String shippingAddressId,
+      String couponCode,
+      String offerType,
+      String discountAmount,
+      String deliveryDate,
+      String pickupLat,
+      String pickupLng,
+      String droplat,
+      String droplng,
+      String shippingType) async {
+    final userId = await Prefs.userId;
+    final common = _getCommonFeild();
+    final postJson = {
+      "user_id": "$userId",
+      "billing_address_id": "$billingAddressId",
+      "shipping_address_id": "$shippingAddressId",
+      "coupon_code": "$couponCode",
+      "offer_type": '$offerType',
+      "discount_amount": "$discountAmount",
+      "delivery_date": "$deliveryDate",
+      "pickup_lat": "$pickupLat",
+      "pickup_lng": "$pickupLng",
+      "drop_lat": "$droplat",
+      "drop_lng": "$droplng",
+      "shipping_type": "$shippingType"
+    };
+    postJson.addAll(common);
+    myPrint(postJson.toString());
+    try {
+      final request = await http.post(UrlList.PLACE_ORDER,
+          headers: await _getHeader(), body: postJson);
+      myPrint(request.body);
+      final jsonResponse = json.decode(request.body);
+      final basicResponse =
+          BasicResponse<Map<String, dynamic>>.fromJson(json: jsonResponse);
+      var data = jsonResponse[UrlConstants.DATA];
+      basicResponse.data = data;
+      return basicResponse;
+    } on SocketException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<BasicResponse<OrderDetailsData>> updatePayment(
+      String order_id,
+      String transaction_id,
+      String paymentStatus,
+      String payment_amount) async {
+    final userid = await Prefs.userId;
+    final common = _getCommonFeild();
+    final postJson = {
+      "user_id": "$userid",
+      "order_id": "$order_id",
+      "transaction_id": "$transaction_id",
+      "payment_status": "$paymentStatus",
+      "payment_amount": "$payment_amount",
+    };
+    postJson.addAll(common);
+    myPrint(postJson.toString());
+    try {
+      final request = await http.post(UrlList.UPDATE_PAYMENT,
+          body: postJson, headers: await _getHeader());
+      print(request.body.toString());
+      final jsonResponse = json.decode(request.body);
+      final basicResponse =
+          BasicResponse<OrderDetailsData>.fromJson(json: jsonResponse);
+      if (basicResponse.status == Constants.SUCCESS) {
+        var data = jsonResponse[UrlConstants.DATA];
+        if (data != null) {
+          data = OrderDetailsData.fromJson(data);
+          basicResponse.data = data;
+        }
+        return basicResponse;
+      } else {
+        throw ApiErrorException(basicResponse.message);
+      }
+    } on SocketException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<BasicResponse<Offers>> verifyCoupons(
+      String couponCode, String amount) async {
+    final userid = await Prefs.userId;
+    final common = _getCommonFeild();
+    final postJson = {
+      "user_id": "$userid",
+      "coupon_code": "$couponCode",
+      "paid_amount": "$amount",
+    };
+    postJson.addAll(common);
+    myPrint(postJson.toString());
+
+    try {
+      final request = await http.post(UrlList.VERIFY_COUPON_CODE,
+          body: postJson, headers: await _getHeader());
+      final response = json.decode(request.body);
+      print(request.body);
+      final basicResponse = BasicResponse.fromJson(json: response);
+      if (basicResponse.status == Constants.SUCCESS) {
+        var data = response[UrlConstants.DATA];
+        data = Offers.fromJson(data, isOffer: false);
+        basicResponse.data = data;
+        return basicResponse;
+      }
+      throw ApiErrorException(basicResponse.message);
+    } catch (e) {
+      myPrint("inside catch");
+      throw ApiErrorException(e);
     }
   }
 

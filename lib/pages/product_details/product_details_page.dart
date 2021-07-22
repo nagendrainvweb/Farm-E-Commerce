@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -147,7 +149,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       child: Row(
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("Pricing",
                   style: TextStyle(
@@ -171,11 +173,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ])),
             ],
           ),
-          SizedBox(
-            width: 15,
-          ),
+          Spacer(),
           AppQtyAddRemoveWidget(
             qty: "${model.productDetailsData.qty}",
+            iconLeftPadding: false,
+            iconRightPadding: false,
+            textScaleRefactor: 0.9,
+            textHorizontalPadding: 4,
+            textVerticalPadding: 0,
+            iconSize: 16,
             onAddClicked: () {
               model.addClicked();
             },
@@ -183,22 +189,24 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               model.lessClicked();
             },
           ),
-          SizedBox(
-            width: 15,
-          ),
-          Expanded(
-            child: AppButtonWidget(
-              width: double.maxFinite,
-              text: "Add to cart",
-              onPressed: () {
+          Spacer(),
+          AppButtonWidget(
+            width: MediaQuery.of(context).size.width * 0.3,
+            text: (model.productDetailsData.isInStock)
+                ? "Add to cart"
+                : "Pre Order",
+            onPressed: () {
+              if (model.productDetailsData.isInStock) {
                 model.addToCart(
                     model.productDetailsData.id,
                     model.productDetailsData.sizes[0].id,
                     model.productDetailsData.qty, onError: (String text) {
                   Utility.showSnackBar(context, text);
                 });
-              },
-            ),
+              } else {
+                myPrint("pre order");
+              }
+            },
           )
         ],
       ),
@@ -207,13 +215,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   _getPriceWithAddBtn(ProductDetailsViewModel model) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         RichText(
             text: TextSpan(
                 text: AppStrings.rupee,
                 style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 24,
                     color: AppColors.blackLight,
                     fontWeight: FontWeight.normal),
                 children: [
@@ -225,15 +233,68 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       color: AppColors.blackLight,
                       fontWeight: FontWeight.bold))
             ])),
-        AppQtyAddRemoveWidget(
-          qty: "${model.productDetailsData.qty}",
-          onAddClicked: () {
-            model.addClicked();
-          },
-          onLessClicked: () {
-            model.lessClicked();
-          },
+        SizedBox(
+          width: 10,
+        ),
+        Visibility(
+          visible: model.productDetailsData.newPrice !=
+              model.productDetailsData.oldPrice,
+          child: Text(
+              "${AppStrings.rupee}${(double.parse(model.productDetailsData.oldPrice)).toStringAsFixed(0)}",
+              style: TextStyle(
+                  fontSize: 18,
+                  color: AppColors.grey500,
+                  decoration: TextDecoration.lineThrough,
+                  fontWeight: FontWeight.normal)),
+        ),
+        Spacer(),
+        Row(
+          children: [
+            Text(
+              "Availability: ",
+              textScaleFactor: 0.8,
+              style: TextStyle(color: AppColors.grey500),
+            ),
+            Text(
+              (model.productDetailsData.isInStock)
+                  ? "in stock"
+                  : "out of stock",
+              textScaleFactor: 0.9,
+              style: TextStyle(
+                  color: (model.productDetailsData.isInStock)
+                      ? Colors.lightGreen
+                      : AppColors.redAccent,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
         )
+
+        // RichText(
+        //     text: TextSpan(
+        //         text: AppStrings.rupee,
+        //         style: TextStyle(
+        //             fontSize: 20,
+        //             color: AppColors.grey500,
+        //             fontWeight: FontWeight.normal),
+        //         children: [
+        //       TextSpan(
+        //           text: (double.parse(model.productDetailsData.oldPrice))
+        //               .toStringAsFixed(0),
+        //           style: TextStyle(
+        //               fontSize: 20,
+        //               color: AppColors.grey500,
+        //               fontWeight: FontWeight.normal))
+        //     ])),
+
+        // AppQtyAddRemoveWidget(
+        //   qty: "${model.productDetailsData.qty}",
+        //   onAddClicked: () {
+        //     model.addClicked();
+        //   },
+        //   onLessClicked: () {
+        //     model.lessClicked();
+        //   },
+        // )
       ],
     );
   }
@@ -254,15 +315,34 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           actions: [
             Stack(
               children: [
-                IconButton(
-                    icon: SvgPicture.asset(
-                      ImageAsset.cartBag,
-                      height: 20,
-                      width: 20,
-                    ),
-                    onPressed: () {
-                      Utility.pushToNext(CartPage(), context);
-                    }),
+                // FloatingActionButton(
+                //   backgroundColor: Colors.white,
+                //   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                //   elevation: 2,
+                //     child: Icon(Icons.shopping_bag_outlined,color: AppColors.grey500,),
+                //     onPressed: () {
+                //       Utility.pushToNext(CartPage(), context);
+                //     }),
+                GestureDetector(
+                  onTap: () {
+                    Utility.pushToNext(CartPage(), context);
+                  },
+                  child: Neumorphic(
+                      style: NeumorphicStyle(
+                        shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                        depth: 8,
+                        lightSource: LightSource.topLeft,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Icon(
+                          Icons.shopping_bag_outlined,
+                          size: 18,
+                        ),
+                      )),
+                ),
                 Align(
                   alignment: Alignment.topCenter,
                   child: Consumer<AppRepo>(
@@ -346,19 +426,74 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                             FontWeight.normal),
                                                   )
                                                 ])),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          model.productDetailsData.category,
-                                          textScaleFactor: 1.1,
-                                          style: TextStyle(
-                                              color: AppColors.grey600),
+                                        // SizedBox(height: 5),
+                                        // Text(
+                                        //   model.productDetailsData.category,
+                                        //   textScaleFactor: 1.1,
+                                        //   style: TextStyle(
+                                        //       color: AppColors.grey600),
+                                        // ),
+                                        (model.productDetailsData.discount >
+                                                    0 ||
+                                                model.productDetailsData
+                                                    .specialText.isNotEmpty)
+                                            ? SizedBox(height: 8)
+                                            : Container(),
+                                        Row(
+                                          children: [
+                                            (model.productDetailsData.discount >
+                                                    0)
+                                                ? Row(
+                                                    children: [
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                            shape: BoxShape
+                                                                .rectangle,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4),
+                                                            color: Colors
+                                                                .lightGreen
+                                                                .withOpacity(
+                                                                    0.2)),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(6),
+                                                        child: Text(
+                                                          "${model.productDetailsData.discount}% Discount",
+                                                          textScaleFactor: 0.8,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.green,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                    ],
+                                                  )
+                                                : Container(),
+                                            (model.productDetailsData
+                                                    .specialText.isNotEmpty)
+                                                ? Expanded(
+                                                    child: Text(
+                                                      "${model.productDetailsData.specialText}",
+                                                      textScaleFactor: 0.9,
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .redAccent),
+                                                    ),
+                                                  )
+                                                : Container()
+                                          ],
                                         ),
                                         SizedBox(height: 10),
                                         _getPriceWithAddBtn(model),
                                         SizedBox(height: 10),
                                         ChickenFeaturesWidget(
-                                          data: model.productDetailsData
-                                        ),
+                                            data: model.productDetailsData),
                                         CheckAvailabilityWidget(),
                                         Descriptionwidget(
                                           decs: model.productDetailsData.desc,
@@ -432,20 +567,35 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                           child: AppProductTile(
                                                             tag: "pro",
                                                             product: product,
+                                                            showAddToCart:
+                                                                false,
                                                             horizontal: Spacing
                                                                 .mediumMargin,
                                                             vertical: Spacing
                                                                 .smallMargin,
                                                             onTileClicked: () {
-                                                              Utility.pushToNext(
-                                                                  ProductDetailsPage(
-                                                                    heroTag:
-                                                                        "pro$index",
-                                                                    productId:
-                                                                        product
-                                                                            .id,
-                                                                  ),
-                                                                  context);
+                                                              if (product
+                                                                  .isInStock) {
+                                                                Utility.pushToNext(
+                                                                    ProductDetailsPage(
+                                                                      heroTag:
+                                                                          "pro$index",
+                                                                      productId:
+                                                                          product
+                                                                              .id,
+                                                                    ),
+                                                                    context);
+                                                              }else{
+                                                                 Utility.pushToNext(
+                                                                    ProductDetailsPage(
+                                                                      heroTag:
+                                                                          "pro$index",
+                                                                      productId:
+                                                                          product
+                                                                              .preOrderId,
+                                                                    ),
+                                                                    context);
+                                                              }
                                                             },
                                                           ),
                                                         ),
@@ -494,7 +644,10 @@ class ProductTabWidget extends ViewModelWidget<ProductDetailsViewModel> {
 
   _getTabWidget(ProductDetailsViewModel model) {
     final List<Widget> widgetList = [
-      BenifitWidget(),
+      BenifitWidget(
+        benifitText: model.benifitText,
+        benifitImages: model.benifitImages,
+      ),
       ReviewWidget(model.productDetailsData.reviewData.review),
     ];
     return widgetList[model.tabPosition];
@@ -649,13 +802,17 @@ class ReviewWidget extends StatelessWidget {
   }
 }
 
-class BenifitWidget extends ViewModelWidget<ProductDetailsViewModel> {
+class BenifitWidget extends StatelessWidget {
   const BenifitWidget({
     Key key,
-  }) : super(key: key, reactive: true);
+    this.benifitText,
+    this.benifitImages,
+  }) : super(key: key);
+  final benifitText;
+  final benifitImages;
 
   @override
-  Widget build(BuildContext context, ProductDetailsViewModel model) {
+  Widget build(BuildContext context) {
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
@@ -663,11 +820,11 @@ class BenifitWidget extends ViewModelWidget<ProductDetailsViewModel> {
         shrinkWrap: true,
         gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, childAspectRatio: 0.9),
-        itemCount: model.benifitText.length,
+        itemCount: benifitText.length,
         physics: ClampingScrollPhysics(),
         itemBuilder: (context, index) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
             child: Neumorphic(
               style: NeumorphicStyle(
                   boxShape:
@@ -682,7 +839,7 @@ class BenifitWidget extends ViewModelWidget<ProductDetailsViewModel> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SvgPicture.asset(
-                      model.benifitImages[index],
+                      benifitImages[index],
                       height: 40,
                     ),
                     // Icon(
@@ -690,14 +847,14 @@ class BenifitWidget extends ViewModelWidget<ProductDetailsViewModel> {
                     //   color: AppColors.green,
                     //   size: 34,
                     // ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 8),
                     Row(
                       children: [
                         Expanded(
                             child: Text(
-                          model.benifitText[index],
+                          benifitText[index],
                           textAlign: TextAlign.center,
-                          textScaleFactor: 0.8,
+                          textScaleFactor: 0.7,
                         )),
                       ],
                     )
@@ -729,13 +886,13 @@ class CustomTab extends StatelessWidget {
             vertical: Spacing.mediumMargin, horizontal: Spacing.extraBigMargin),
         decoration: BoxDecoration(
             border: (active)
-                ? Border.all(color: AppColors.blackLight, width: 0.8)
+                ? Border.all(color: AppColors.green, width: 1.0)
                 : Border(),
             borderRadius: BorderRadius.circular((active) ? 6 : 0)),
         child: Text(title,
             textScaleFactor: 0.9,
             style: TextStyle(
-                color: (active) ? AppColors.blackLight : AppColors.blackGrey)),
+                color: (active) ? AppColors.green : AppColors.blackGrey)),
       ),
     );
   }
@@ -853,12 +1010,13 @@ class ChickenFeaturesWidget extends StatelessWidget {
             children: [
               Expanded(
                   child: FeatureTile(
-                    image: ImageAsset.no_of_pieces,
+                image: ImageAsset.no_of_pieces,
                 title: "No of Pieces ${data.piece}",
               )),
-              Expanded(child: FeatureTile(
-                 image: ImageAsset.gross_wt,
-                title: "Gross Wt. ${data.grossWeight}"))
+              Expanded(
+                  child: FeatureTile(
+                      image: ImageAsset.gross_wt,
+                      title: "Gross Wt. ${data.grossWeight}"))
             ],
           ),
           SizedBox(
@@ -868,12 +1026,12 @@ class ChickenFeaturesWidget extends StatelessWidget {
             children: [
               Expanded(
                   child: FeatureTile(
-                     image: ImageAsset.serves,
+                image: ImageAsset.serves,
                 title: "Serves ${data.serves}",
               )),
               Expanded(
                   child: FeatureTile(
-                     image: ImageAsset.net_wt,
+                image: ImageAsset.net_wt,
                 title: "Net Wt. ${data.netWeight}",
               ))
             ],
@@ -898,8 +1056,9 @@ class FeatureTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SvgPicture.asset(image,
-        height: 22,
+        SvgPicture.asset(
+          image,
+          height: 22,
         ),
         // Icon(
         //   Icons.local_drink_outlined,

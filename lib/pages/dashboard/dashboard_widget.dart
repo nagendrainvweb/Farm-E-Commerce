@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:lotus_farm/app/appRepository.dart';
@@ -8,6 +9,8 @@ import 'package:lotus_farm/app_widget/AppQtyAddRemoveWidget.dart';
 import 'package:lotus_farm/app_widget/app_amount.dart';
 import 'package:lotus_farm/app_widget/app_carousel.dart';
 import 'package:lotus_farm/app_widget/app_product_tile.dart';
+import 'package:lotus_farm/model/dashboard_data.dart';
+import 'package:lotus_farm/pages/category_page/pre_order_page.dart';
 import 'package:lotus_farm/pages/dashboard/dashboard_view_model.dart';
 import 'package:lotus_farm/pages/product_details/product_details_page.dart';
 import 'package:lotus_farm/pages/tranding_page/tranding_page.dart';
@@ -52,67 +55,74 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   }
 
   _getSliderIndicator(DashboardViewModel model) {
-    return Container(
-        height: 40,
-        color: Colors.transparent,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedSmoothIndicator(
-              activeIndex: model.currentPosition,
-              count: model.dashboardData.banner.length,
-              effect: WormEffect(
-                  dotHeight: 8,
-                  dotWidth: 8,
-                  activeDotColor: AppColors.green,
-                  dotColor: AppColors.grey400,
-                  spacing: 6.0),
-            ),
-          ],
-        )
-        //  List.generate(model.bannerList.length, (position) {
-        //   return Container(
-        //     height: 14,
-        //     padding: EdgeInsets.all(3),
-        //     margin: EdgeInsets.all(4),
-        //     decoration: BoxDecoration(
-        //       shape: BoxShape.circle,
-        //       color: (model.currentPosition == position
-        //           ? AppColors.green
-        //           : AppColors.grey400),
-        //     ),
-        //   );
-        // }
+    return (model.dashboardData.banner.length > 1)
+        ? Container(
+            height: 40,
+            color: Colors.transparent,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedSmoothIndicator(
+                  activeIndex: model.currentPosition,
+                  count: model.dashboardData.banner.length,
+                  effect: WormEffect(
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      activeDotColor: AppColors.green,
+                      dotColor: AppColors.grey400,
+                      spacing: 6.0),
+                ),
+              ],
+            )
+            //  List.generate(model.bannerList.length, (position) {
+            //   return Container(
+            //     height: 14,
+            //     padding: EdgeInsets.all(3),
+            //     margin: EdgeInsets.all(4),
+            //     decoration: BoxDecoration(
+            //       shape: BoxShape.circle,
+            //       color: (model.currentPosition == position
+            //           ? AppColors.green
+            //           : AppColors.grey400),
+            //     ),
+            //   );
+            // }
 
-        );
+            )
+        : Container();
   }
 
   _getSheduleOrder(DashboardViewModel model) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: Spacing.bigMargin, vertical: Spacing.smallMargin),
-      child: Neumorphic(
-        style: NeumorphicStyle(
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-        ),
-        child: CachedNetworkImage(
-          width: double.maxFinite,
-          height: 80,
-          imageUrl: model.dashboardData.subBanner,
-          placeholder: (context, data) {
-            return Container(
-              child: new Center(
-                child: SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: new CircularProgressIndicator(
-                    strokeWidth: 2,
+    return InkWell(
+      onTap: () {
+        Utility.pushToNext(PreOrderPage(), context);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: Spacing.bigMargin, vertical: Spacing.smallMargin),
+        child: Neumorphic(
+          style: NeumorphicStyle(
+            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+          ),
+          child: CachedNetworkImage(
+            width: double.maxFinite,
+            height: 80,
+            imageUrl: model.dashboardData.subBanner,
+            placeholder: (context, data) {
+              return Container(
+                child: new Center(
+                  child: SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: new CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-          fit: BoxFit.cover,
+              );
+            },
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
@@ -121,9 +131,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   _getCarousel(DashboardViewModel model) {
     return Container(
       child: AppCarousel(
-        true,
-        bannerList:
-            model.dashboardData.banner.map((e) => e.imageUrl).toList(),
+        (model.dashboardData.banner.length > 1),
+        bannerList: model.dashboardData.banner.map((e) => e.imageUrl).toList(),
         onPageChanged: (int index, reason) {
           model.pageChanged(index);
         },
@@ -138,16 +147,16 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Trending",
+          Text("Best Selling",
               style: TextStyle(
                   color: AppColors.green,
                   fontSize: 18,
                   fontWeight: FontWeight.bold)),
           InkWell(
             onTap: () {
-              Utility.pushToNext(TrendingPage(
-                list: model.dashboardData.products[1].items
-              ), context);
+              Utility.pushToNext(
+                  TrendingPage(list: model.dashboardData.products[1].items),
+                  context);
             },
             child: Text("See All",
                 style: TextStyle(
@@ -155,6 +164,23 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     fontSize: 13,
                     fontWeight: FontWeight.normal)),
           ),
+        ],
+      ),
+    );
+  }
+
+  _getHeader(String title) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: Spacing.bigMargin, vertical: Spacing.defaultMargin),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("$title",
+              style: TextStyle(
+                  color: AppColors.green,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -170,7 +196,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       child: GridView.builder(
         shrinkWrap: true,
         gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, childAspectRatio: (itemWidth / 290)),
+            crossAxisCount: 2, childAspectRatio: (itemWidth / 300)),
         itemCount: model.dashboardData.products[1].items.length,
         physics: ClampingScrollPhysics(),
         itemBuilder: (context, index) {
@@ -183,6 +209,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 product: product,
                 horizontal: Spacing.smallMargin,
                 vertical: Spacing.defaultMargin,
+                onPreOrderClicked: () {
+                  myPrint("pre order clicked");
+                },
                 onCartClicked: () {
                   showModalBottomSheet(
                       context: context,
@@ -214,8 +243,66 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     );
   }
 
+  _getLegacyText() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Text(
+        "\" LotusFarms was started in 1991 with just 6000 birds, some acres of land and a dream to server others! yet, today after 29 years, we continue the lagacy and are bumbled to carry on the tradition and watch our poulty farm gro as one of the leading million birds per year as we deliver fresh and tender chiken across Bengaluru without compromising on its nutritive values. \"",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontSize: 11,
+            color: AppColors.grey500,
+            fontStyle: FontStyle.italic),
+      ),
+    );
+  }
+
+  _getTestimonial(List<Testimonials> list) {
+    final size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width / 2;
+    return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        width: MediaQuery.of(context).size.width,
+        height: 150,
+        child: CarouselSlider(
+            options: CarouselOptions(
+                autoPlay: false,
+                enlargeCenterPage: true,
+                enableInfiniteScroll: false,
+                viewportFraction: 1.0,
+                aspectRatio: (itemWidth / itemHeight),
+                initialPage: 0,
+                autoPlayCurve: Curves.linear,
+                onPageChanged: (index, reason) {
+                  //widget.onPageChanged(index, reason);
+                }),
+            items: List.generate(
+                list.length,
+                (index) => Column(
+                      children: [
+                        Text(
+                          "\"${list[index].content}\"",
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic, fontSize: 11),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Text(
+                          "${list[index].name}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 12),
+                        )
+                      ],
+                    ))));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width / 2;
     final repo = Provider.of<AppRepo>(context, listen: false);
     return ViewModelBuilder<DashboardViewModel>.reactive(
       viewModelBuilder: () => DashboardViewModel(),
@@ -259,6 +346,17 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                         _getSheduleOrder(model),
                         _getListHeader(model),
                         _getList(model),
+                        _getHeader("Our Legacy"),
+                        _getLegacyText(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        BenifitWidget(
+                          benifitText: model.benifitText,
+                          benifitImages: model.benifitImages,
+                        ),
+                        _getHeader("Testimonials"),
+                        _getTestimonial(model.dashboardData.testimonials),
                       ],
                     )),
                   ),

@@ -34,7 +34,7 @@ class _AddressPageState extends State<AddressPage> {
               Text("Addresses", style: TextStyle(color: AppColors.blackGrey)),
         ),
         floatingActionButton: Visibility(
-          visible: (model.addressList !=null && model.addressList.isNotEmpty),
+          visible: (model.addressList != null && model.addressList.isNotEmpty),
           child: FloatingActionButton(
             child: Icon(Icons.add, color: AppColors.white),
             onPressed: () async {
@@ -63,7 +63,7 @@ class _AddressPageState extends State<AddressPage> {
                     })
                 : (model.addressList.isEmpty)
                     ? NoAddressWidget(
-                        onAddCliked: ()async {
+                        onAddCliked: () async {
                           final value = await Utility.pushToNext(
                               AddEditAddressPage(), context);
                           if (value != null) {
@@ -279,9 +279,17 @@ class StoreTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final monday = json.decode(storeData.operationMon);
-    final timeFrom = monday["from"][0] + ":" + monday["from"][1];
-    final timeTo = monday["to"][0] + ":" + monday["to"][1];
+    var monday;
+    String timeFrom;
+    String timeTo;
+    try {
+      monday = json.decode(storeData.operationMon);
+      timeFrom = monday["from"][0] + ":" + monday["from"][1];
+      timeTo = monday["to"][0] + ":" + monday["to"][1];
+    } catch (e) {
+      timeFrom = "";
+      timeTo = "";
+    }
     return AppNeumorphicContainer(
       radius: 8,
       child: InkWell(

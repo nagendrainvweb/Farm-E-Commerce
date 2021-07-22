@@ -24,13 +24,14 @@ class AppQtyAddRemoveWidget extends StatelessWidget {
     return Container(
       //  padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6), color: AppColors.green),
+        border: Border.all(color: AppColors.grey500),
+          borderRadius: BorderRadius.circular(6), color: AppColors.white),
       child: Row(
         children: [
           Visibility(visible: iconLeftPadding, child: SizedBox(width: 5)),
           IconButton(
               icon: Icon(Icons.remove),
-              color: AppColors.white,
+              color: AppColors.blackGrey,
               visualDensity: VisualDensity.compact,
               iconSize: iconSize,
               onPressed: onLessClicked),
@@ -41,11 +42,11 @@ class AppQtyAddRemoveWidget extends StatelessWidget {
             child: Text(qty,
                 textScaleFactor: textScaleRefactor,
                 style: TextStyle(
-                    color: AppColors.white, fontWeight: FontWeight.bold)),
+                    color: AppColors.blackGrey, fontWeight: FontWeight.bold)),
           ),
           IconButton(
               icon: Icon(Icons.add),
-              color: AppColors.white,
+              color: AppColors.blackGrey,
               visualDensity: VisualDensity.compact,
               iconSize: iconSize,
               onPressed: onAddClicked),

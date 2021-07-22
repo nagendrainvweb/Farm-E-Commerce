@@ -5,8 +5,9 @@ class DashboardData {
   List<BannerData> banner;
   String subBanner;
   List<Products> products;
+   List<Testimonials> testimonials;
 
-  DashboardData({this.inCartcount,this.subBanner, this.banner, this.products});
+  DashboardData({this.inCartcount,this.subBanner, this.banner,  this.testimonials,this.products});
 
   DashboardData.fromJson(Map<String, dynamic> json) {
     inCartcount = json['inCartcount'];
@@ -23,6 +24,12 @@ class DashboardData {
       });
     }
     subBanner = json["sub_banner"];
+     if (json['testimonials'] != null) {
+      testimonials = new List<Testimonials>();
+      json['testimonials'].forEach((v) {
+        testimonials.add(new Testimonials.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -86,6 +93,27 @@ class Products {
     if (this.items != null) {
       data['items'] = this.items.map((v) => v.toJson()).toList();
     }
+    return data;
+  }
+}
+class Testimonials {
+  String testimonialId;
+  String name;
+  String content;
+
+  Testimonials({this.testimonialId, this.name, this.content});
+
+  Testimonials.fromJson(Map<String, dynamic> json) {
+    testimonialId = json['testimonial_id'];
+    name = json['name'];
+    content = json['content'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['testimonial_id'] = this.testimonialId;
+    data['name'] = this.name;
+    data['content'] = this.content;
     return data;
   }
 }

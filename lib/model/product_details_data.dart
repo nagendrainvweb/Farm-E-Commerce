@@ -5,22 +5,30 @@ class ProductDetailsData {
   String id;
   String name;
   String desc;
-  String product_url;
+  String productUrl;
+  String categoryId;
+  String preOrderLink;
+  String preOrderId;
   String category;
   bool isOffer;
+  int sizeId;
   int offer;
   String oldPrice;
   String newPrice;
+  int discount;
+  String specialPrice;
+  String specialTodate;
+  String specialFromdate;
+  int stockItem;
+  String specialText;
   bool isInCart;
-  var size_id;
   bool isInWishlist;
   String availability;
   String selfLife;
   String expectedDelivery;
   String ingradientDetails;
-  String categoryId;
   int qty;
-  var rating;
+  int rating;
   bool isInStock;
   String nutritionFacts;
   List<Images> images;
@@ -35,8 +43,10 @@ class ProductDetailsData {
       {this.id,
       this.name,
       this.desc,
-      this.product_url,
+      this.productUrl,
       this.category,
+      this.preOrderLink,
+      this.preOrderId,
       this.isOffer,
       this.offer,
       this.oldPrice,
@@ -49,7 +59,6 @@ class ProductDetailsData {
       this.expectedDelivery,
       this.ingradientDetails,
       this.qty,
-      this.size_id,
       this.rating,
       this.isInStock,
       this.nutritionFacts,
@@ -64,24 +73,29 @@ class ProductDetailsData {
   ProductDetailsData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    desc = (json['desc'] == null) ? "" : json['desc'];
-    product_url = json['product_url'];
-    category = json['category'];
-    isOffer = json['isOffer'];
-    offer = json['offer'];
-    oldPrice = json['old_price'];
-    newPrice = json['new_price'];
-    isInCart = json['isInCart'];
+    desc = Utility.removeAllHtmlTags(json['desc']);
+    productUrl = json['product_url'];
     categoryId = json['category_id'];
+    category = json['category'];
+    preOrderLink = json['pre_order_link'];
+    preOrderId = json['pre_order_id'];
+    isOffer = json['isOffer'];
+    sizeId = json['size_id'];
+    offer = json['offer'];
+    oldPrice = json['old_price'].toString();
+    newPrice = json['new_price'].toString();
+    discount = json['discount'];
+    specialPrice = json['special_price'];
+    specialTodate = json['special_todate'];
+    specialFromdate = json['special_fromdate'];
+    stockItem = json['stockItem'];
+    specialText = json['special_text']??"";
+    isInCart = json['isInCart'];
     isInWishlist = json['isInWishlist'];
     availability = json['availability'];
-    size_id = json['size_id'];
-    selfLife = (json['self_life'] == null)
-        ? ""
-        : Utility.removeAllHtmlTags(json['self_life']);
+    selfLife = json['self_life'];
     expectedDelivery = json['expected_delivery'];
-    ingradientDetails =
-        (json['ingradient_details'] == null) ? "" : json['ingradient_details'];
+    ingradientDetails = json['ingradient_details'];
     qty = json['qty'];
     rating = json['rating'];
     isInStock = json['isInStock'];
@@ -117,14 +131,21 @@ class ProductDetailsData {
     data['id'] = this.id;
     data['name'] = this.name;
     data['desc'] = this.desc;
-    data['product_url'] = this.product_url;
+    data['product_url'] = this.productUrl;
+    data['category_id'] = this.categoryId;
     data['category'] = this.category;
     data['isOffer'] = this.isOffer;
+    data['size_id'] = this.sizeId;
     data['offer'] = this.offer;
     data['old_price'] = this.oldPrice;
     data['new_price'] = this.newPrice;
+    data['discount'] = this.discount;
+    data['special_price'] = this.specialPrice;
+    data['special_todate'] = this.specialTodate;
+    data['special_fromdate'] = this.specialFromdate;
+    data['stockItem'] = this.stockItem;
+    data['special_text'] = this.specialText;
     data['isInCart'] = this.isInCart;
-    data['category_id'] = this.categoryId;
     data['isInWishlist'] = this.isInWishlist;
     data['availability'] = this.availability;
     data['self_life'] = this.selfLife;
@@ -132,10 +153,6 @@ class ProductDetailsData {
     data['ingradient_details'] = this.ingradientDetails;
     data['qty'] = this.qty;
     data['rating'] = this.rating;
-    data["gross_weight"] = this.grossWeight;
-    data["net_weight"] = this.netWeight;
-    data["serves"] = this.serves;
-    data["piece"] = this.piece;
     data['isInStock'] = this.isInStock;
     data['Nutrition_facts'] = this.nutritionFacts;
     if (this.images != null) {

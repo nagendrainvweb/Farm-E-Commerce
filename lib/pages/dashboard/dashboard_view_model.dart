@@ -4,6 +4,8 @@ import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/model/dashboard_data.dart';
 import 'package:lotus_farm/model/product_data.dart';
 import 'package:lotus_farm/pages/login_page/login_page.dart';
+import 'package:lotus_farm/prefrence_util/Prefs.dart';
+import 'package:lotus_farm/resources/images/images.dart';
 import 'package:lotus_farm/services/api_service.dart';
 import '../../utils/constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
@@ -28,10 +30,29 @@ class DashboardViewModel extends BaseViewModel with AppHelper {
   List<String> get bannerList => _bannerList;
   int _currentPostion = 0;
 
+  List<String> _benifitImages = [
+    ImageAsset.leaf,
+    ImageAsset.quality,
+    ImageAsset.chckien_feed,
+    ImageAsset.hand_leaf,
+    ImageAsset.hanad_shake,
+    ImageAsset.chemical_not_allowed,
+  ];
+  List<String> _benifitText = [
+    "Fresh with nutrition intact",
+    "Chilled Water Preservation Technique",
+    "Precision Nutrision",
+    "Open Farming",
+    "Traceable Transparent and Trusted",
+    "No Preservatives & No Antibiotics"
+  ];
+
   int get currentPosition => _currentPostion;
   bool get loading => _loading;
   bool get hasError => _hasError;
   DashboardData get dashboardData => _dashboardData;
+  List<String> get benifitImages => _benifitImages;
+  List<String> get benifitText => _benifitText;
 
   AppRepo _appRepo;
 
@@ -40,12 +61,15 @@ class DashboardViewModel extends BaseViewModel with AppHelper {
     notifyListeners();
   }
 
-  void initTrending(AppRepo repo){
-     _appRepo = repo;
+  void initTrending(AppRepo repo) {
+    _appRepo = repo;
   }
 
-  void init(AppRepo repo) {
+  void init(AppRepo repo) async {
     _appRepo = repo;
+    final login = await Prefs.login;
+    _appRepo.setLogin(login);
+
     if (_appRepo.dashboardData != null) {
       _loading = false;
       _hasError = false;
@@ -84,11 +108,13 @@ class DashboardViewModel extends BaseViewModel with AppHelper {
   }
 
   void addToCart(Product product, int qty, {Function onError}) async {
-    if (_appRepo.login) {
+    myPrint("hey i  am clicked");
+    final login = await Prefs.login;
+    if (login) {
       try {
         showProgressDialogService("Please wait...");
         final response =
-            await _apiService.addToCart(product.id, qty, product.sizes[0].id);
+            await _apiService.addToCart(product.id, qty, "");
         hideProgressDialogService();
         if (response.status == Constants.SUCCESS) {
           _appRepo.setCartCount(response.cartCount);

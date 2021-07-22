@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
       },
       builder: (context, model, child) => Scaffold(
         appBar: AppBar(
-          // title: Text("Lotus Farm"),
+           title:(model.currentBottomIndex == 1)? Text("Everything Chicken",style: TextStyle(color: AppColors.blackGrey),): Container(),
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: IconButton(

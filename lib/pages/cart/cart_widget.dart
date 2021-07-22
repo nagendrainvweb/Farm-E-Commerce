@@ -26,6 +26,7 @@ class CartWidget extends StatefulWidget {
 }
 
 class _CartWidgetState extends State<CartWidget> {
+  final _refreshkey = GlobalKey<RefreshIndicatorState>();
   _getBottomWidget(CartViewModel model) {
     int totalAmount = 0;
     for (Product product in model.cartList) {
@@ -67,6 +68,8 @@ class _CartWidgetState extends State<CartWidget> {
               //Utility.pushToNext(CheckoutPage(), context);
               model.checkOutClicked(onMessage: (String text) {
                 Utility.showSnackBar(context, text);
+              }, onCallback: () {
+                _refreshkey.currentState.show();
               });
             },
           )
@@ -100,7 +103,12 @@ class _CartWidgetState extends State<CartWidget> {
                       child: Column(
                         children: [
                           Expanded(
-                            child: Container(
+                            child: RefreshIndicator(
+                              key: _refreshkey,
+                              onRefresh: () async {
+                                return await model.fetchCartList(
+                                    loading: false);
+                              },
                               child: ListView.separated(
                                 itemCount: model.cartList.length,
                                 separatorBuilder: (_, index) => Container(
@@ -235,12 +243,14 @@ class CartItemTile extends StatelessWidget {
     this.onAddClicked,
     this.onLessClicked,
     this.onDeleteClicked,
+    this.isDetails = false,
   }) : super(key: key);
 
   final Product product;
   final Function onAddClicked;
   final Function onLessClicked;
   final Function onDeleteClicked;
+  final bool isDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -258,9 +268,12 @@ class CartItemTile extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                Utility.pushToNext(ProductDetailsPage(
-                    productId: product.id,
-                ), context);
+                if (!isDetails)
+                  Utility.pushToNext(
+                      ProductDetailsPage(
+                        productId: product.id,
+                      ),
+                      context);
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,19 +337,29 @@ class CartItemTile extends StatelessWidget {
                           children: [
                             AppAmountWidget(
                               amount: "${(product.amount)}",
-                              rupeeColor: AppColors.green,
+                              rupeeColor: AppColors.blackGrey,
                             ),
-                            AppQtyAddRemoveWidget(
-                              qty: "${product.qty}",
-                              iconLeftPadding: false,
-                              iconRightPadding: false,
-                              textScaleRefactor: 0.9,
-                              textHorizontalPadding: 4,
-                              textVerticalPadding: 0,
-                              iconSize: 16,
-                              onAddClicked: onAddClicked,
-                              onLessClicked: onLessClicked,
-                            )
+                            (!isDetails)
+                                ? AppQtyAddRemoveWidget(
+                                    qty: "${product.qty}",
+                                    iconLeftPadding: false,
+                                    iconRightPadding: false,
+                                    textScaleRefactor: 0.9,
+                                    textHorizontalPadding: 4,
+                                    textVerticalPadding: 0,
+                                    iconSize: 16,
+                                    onAddClicked: onAddClicked,
+                                    onLessClicked: onLessClicked,
+                                  )
+                                : Row(
+                                    children: [
+                                      Text("Qty :"),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text("${product.qty}")
+                                    ],
+                                  )
                           ],
                         )
                       ],
@@ -347,19 +370,22 @@ class CartItemTile extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.topRight,
-              child: InkWell(
-                onTap: onDeleteClicked,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          // topRight: Radius.circular(12),
-                          bottomLeft: Radius.circular(12)),
-                      color: Colors.red.shade400),
-                  child: Icon(
-                    Icons.delete_forever_outlined,
-                    color: AppColors.white,
-                    size: 16,
+              child: Visibility(
+                visible: !isDetails,
+                child: InkWell(
+                  onTap: onDeleteClicked,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            // topRight: Radius.circular(12),
+                            bottomLeft: Radius.circular(12)),
+                        color: Colors.red.shade400),
+                    child: Icon(
+                      Icons.close,
+                      color: AppColors.white,
+                      size: 16,
+                    ),
                   ),
                 ),
               ),

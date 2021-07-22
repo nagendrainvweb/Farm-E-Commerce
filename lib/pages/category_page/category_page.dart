@@ -12,6 +12,9 @@ import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
 
 class CategoryPage extends StatefulWidget {
+  final bool isPreOrder;
+
+  const CategoryPage({Key key, this.isPreOrder=false}) : super(key: key);
   @override
   _CategoryPageState createState() => _CategoryPageState();
 }
@@ -26,7 +29,7 @@ class _CategoryPageState extends State<CategoryPage> {
     return ViewModelBuilder<CategoryViewModel>.reactive(
       viewModelBuilder: () => CategoryViewModel(),
       onModelReady: (model) {
-        model.initData(appRepo);
+        model.initData(appRepo, widget.isPreOrder);
       },
       builder: (_, model, child) => Container(
         child: (model.loading)
@@ -45,14 +48,18 @@ class _CategoryPageState extends State<CategoryPage> {
                         vertical: Spacing.smallMargin),
                     child: RefreshIndicator(
                       onRefresh: () async {
-                        return await model.fetchAllProducts(loading: false);
+                        if (widget.isPreOrder) {
+                          return await model.fetchPreOrder(loading: false);
+                        } else {
+                          return await model.fetchAllProducts(loading: false);
+                        }
                       },
                       child: GridView.builder(
                         shrinkWrap: true,
                         gridDelegate:
                             new SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
-                                childAspectRatio: (itemWidth / 290)),
+                                childAspectRatio: (itemWidth / 300)),
                         itemCount: model.productList.length,
                         physics: ClampingScrollPhysics(),
                         itemBuilder: (context, index) {
@@ -85,7 +92,9 @@ class _CategoryPageState extends State<CategoryPage> {
                                   Utility.pushToNext(
                                       ProductDetailsPage(
                                         heroTag: "cat$index",
-                                        productId:product.id ,
+                                        productId: (product.isInStock)
+                                            ? product.id
+                                            : product.preOrderId,
                                       ),
                                       context);
                                 },

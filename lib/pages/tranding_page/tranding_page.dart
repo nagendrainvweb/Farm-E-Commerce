@@ -28,7 +28,7 @@ class _TrendingPageState extends State<TrendingPage> {
     return ViewModelBuilder<CategoryViewModel>.reactive(
         viewModelBuilder: () => CategoryViewModel(),
         onModelReady: (model) {
-          model.initTrending(appRepo,widget.list);
+          model.initTrending(appRepo, widget.list);
         },
         builder: (_, model, child) => Scaffold(
             appBar: AppBar(
@@ -39,7 +39,8 @@ class _TrendingPageState extends State<TrendingPage> {
               child: _getList(model),
             )));
   }
-    _getList(CategoryViewModel model) {
+
+  _getList(CategoryViewModel model) {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
@@ -58,7 +59,7 @@ class _TrendingPageState extends State<TrendingPage> {
             tag: "trend$index",
             child: Container(
               child: AppProductTile(
-               tag: "trend$index",
+                tag: "trend$index",
                 product: product,
                 horizontal: Spacing.smallMargin,
                 vertical: Spacing.defaultMargin,
@@ -78,12 +79,21 @@ class _TrendingPageState extends State<TrendingPage> {
                           ));
                 },
                 onTileClicked: () {
-                  Utility.pushToNext(
-                      ProductDetailsPage(
-                        heroTag: "trend$index",
-                        productId: product.id,
-                      ),
-                      context);
+                  if (product.isInStock) {
+                    Utility.pushToNext(
+                        ProductDetailsPage(
+                          heroTag: "trend$index",
+                          productId: product.id,
+                        ),
+                        context);
+                  }else{
+                     Utility.pushToNext(
+                        ProductDetailsPage(
+                          heroTag: "trend$index",
+                          productId: product.preOrderId,
+                        ),
+                        context);
+                  }
                 },
               ),
             ),

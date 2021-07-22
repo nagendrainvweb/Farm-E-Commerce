@@ -1,5 +1,3 @@
-
-
 import 'package:lotus_farm/utils/utility.dart';
 
 class Product {
@@ -7,19 +5,29 @@ class Product {
   String name;
   String desc;
   String category;
-  String category_id;
+  String categoryId;
+  String grossWeight;
+  String netWeight;
+  String preOrderLink;
+  String preOrderId;
   bool isOffer;
   int offer;
-  String oldPrice;
-  int newPrice;
-  bool isInCart;
   bool isInStock;
+  int oldPrice;
+  int newPrice;
+  int discount;
+  String specialPrice;
+  String specialTodate;
+  String specialFromdate;
+  int stockItem;
+  String specialText;
+  bool isInCart;
   bool isInWishlist;
-  int size_id;
-  var qty;
+  int qty;
   List<Images> images;
   List<Sizes> sizes;
   int amount;
+  String size_id;
   int orderBy;
 
   Product(
@@ -27,36 +35,56 @@ class Product {
       this.name,
       this.desc,
       this.category,
-      this.category_id,
+      this.categoryId,
+      this.grossWeight,
+      this.netWeight,
+      this.preOrderLink,
+      this.preOrderId,
       this.isOffer,
       this.offer,
+      this.isInStock,
       this.oldPrice,
       this.newPrice,
+      this.discount,
+      this.specialPrice,
+      this.specialTodate,
+      this.specialFromdate,
+      this.stockItem,
+      this.specialText,
       this.isInCart,
-      this.isInStock,
       this.isInWishlist,
       this.qty,
-      this.size_id,
       this.amount,
       this.images,
+      this.size_id,
       this.orderBy,
       this.sizes});
 
-  Product.fromJson(Map<String, dynamic> json,{int order}) {
+  Product.fromJson(Map<String, dynamic> json, {int order}) {
     id = json['id'];
     name = json['name'];
-    desc = (json['desc']==null)?"":Utility.removeAllHtmlTags(json['desc']);
+    desc = json['desc'];
     category = json['category'];
-    category_id = json['category_id'];
+    categoryId = json['category_id'];
+    grossWeight = json['gross_weight'];
+    netWeight = json['net_weight'];
+    preOrderLink = json['pre_order_link'];
+    preOrderId = json['pre_order_id'];
     isOffer = json['isOffer'];
     offer = json['offer'];
-    oldPrice = json['old_price'];
-    newPrice = double.parse(json['new_price'].toString()).toInt();
-    isInCart = json['isInCart'];
     isInStock = json['isInStock'];
+    oldPrice = json['old_price'];
+    newPrice = json['new_price'];
+    discount = json['discount'];
+    specialPrice = json['special_price'].toString();
+    specialTodate = json['special_todate'].toString();
+    specialFromdate = json['special_fromdate'].toString();
+    stockItem = json['stockItem'];
+    specialText = json['special_text'];
+    isInCart = json['isInCart'];
     isInWishlist = json['isInWishlist'];
     qty = json['qty'];
-    size_id = json['size_id'];
+    size_id = json["size_id"].toString();
     amount = json['amount'];
     orderBy = order;
     if (json['images'] != null) {
@@ -65,25 +93,24 @@ class Product {
         images.add(new Images.fromJson(v));
       });
     }
-    if (json['sizes'] != null) {
-      sizes = new List<Sizes>();
-      json['sizes'].forEach((v) {
-        sizes.add(new Sizes.fromJson(v));
-      });
-      sizes.sort((a,b){
-        double aPrice  = double.parse(a.newPrice.toString());
-        double bPrice  = double.parse(b.newPrice.toString());
-        return aPrice.compareTo(bPrice);
-      });
-    }
+    // if (json['sizes'] != null) {
+    //   sizes = new List<Sizes>();
+    //   json['sizes'].forEach((v) {
+    //     sizes.add(new Sizes.fromJson(v));
+    //   });
+    //   sizes.sort((a, b) {
+    //     double aPrice = double.parse(a.newPrice.toString());
+    //     double bPrice = double.parse(b.newPrice.toString());
+    //     return aPrice.compareTo(bPrice);
+    //   });
+    // }
   }
 
-  Map<String,dynamic> toCartJson(){
+  Map<String, dynamic> toCartJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['product_id'] = this.id;
     data['qty'] = this.qty;
-    data['category_id'] = this.category_id;
-    data['size'] = this.size_id;
+    data['category_id'] = this.categoryId;
     data['amount'] = this.amount;
     return data;
   }
@@ -94,13 +121,19 @@ class Product {
     data['name'] = this.name;
     data['desc'] = this.desc;
     data['category'] = this.category;
+    data['category_id'] = this.categoryId;
     data['isOffer'] = this.isOffer;
     data['offer'] = this.offer;
-    data['old_price'] = this.oldPrice;
-    data['size_id'] = this.size_id;
-    data['new_price'] = this.newPrice;
-    data['isInCart'] = this.isInCart;
     data['isInStock'] = this.isInStock;
+    data['old_price'] = this.oldPrice;
+    data['new_price'] = this.newPrice;
+    data['discount'] = this.discount;
+    data['special_price'] = this.specialPrice;
+    data['special_todate'] = this.specialTodate;
+    data['special_fromdate'] = this.specialFromdate;
+    data['stockItem'] = this.stockItem;
+    data['special_text'] = this.specialText;
+    data['isInCart'] = this.isInCart;
     data['isInWishlist'] = this.isInWishlist;
     data['qty'] = this.qty;
     data['amount'] = this.amount;
@@ -157,10 +190,3 @@ class Sizes {
     return data;
   }
 }
-
-
-
-
-
-
- 

@@ -46,7 +46,7 @@ class _OrderPageState extends State<OrderPage> {
                           return await model.fetchOrderList(loading: false);
                         },
                         child: ListView.separated(
-                            itemCount: 10,
+                            itemCount: model.orderList.length,
                             separatorBuilder: (_, index) => Container(
                                   height: 12,
                                 ),
@@ -71,7 +71,7 @@ class _OrderPageState extends State<OrderPage> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "Order Id #23541545",
+                                                    "Order Id #${model.orderList[index].orderId}",
                                                     style: TextStyle(
                                                         color:
                                                             AppColors.grey600,
@@ -83,7 +83,8 @@ class _OrderPageState extends State<OrderPage> {
                                                     height: 4,
                                                   ),
                                                   Text(
-                                                    "31 March 2021",
+                                                    "${model.orderList[index].orderDate}",
+                                                    //"31 March 2021",
                                                     style: TextStyle(
                                                         color:
                                                             AppColors.grey500,
@@ -98,7 +99,7 @@ class _OrderPageState extends State<OrderPage> {
                                                     CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    "Delivered",
+                                                    "${model.orderList[index].status}",
                                                     style: TextStyle(
                                                         color: AppColors.green,
                                                         fontSize: 11),
@@ -107,7 +108,7 @@ class _OrderPageState extends State<OrderPage> {
                                                     height: 4,
                                                   ),
                                                   Text(
-                                                    "31 March 2021",
+                                                    "${model.orderList[index].statusDate}",
                                                     style: TextStyle(
                                                         color:
                                                             AppColors.grey500,

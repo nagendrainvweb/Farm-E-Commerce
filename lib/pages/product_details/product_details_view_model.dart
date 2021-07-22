@@ -68,6 +68,7 @@ class ProductDetailsViewModel extends BaseViewModel with AppHelper {
   }
 
   fetchProductDetails() async {
+     _hasError = false;
     try {
       final response = await _apiService.fetchProductDetails(_productId);
       _loading = false;

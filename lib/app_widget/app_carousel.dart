@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
+import 'package:lotus_farm/utils/utility.dart';
 
 class AppCarousel extends StatefulWidget {
   bool autoScroll;
@@ -52,6 +53,7 @@ class _AppCarouselState extends State<AppCarousel> {
                 (position) {
                   return InkWell(
                     onTap: () async {
+                     // myPrint("banner is  ${ widget.bannerList[position]}");
                       // final token = await Prefs.token;
                       // final id  = await Prefs.id;
                       // myPrint("$token +"  "+$id");
@@ -91,28 +93,6 @@ class _AppCarouselState extends State<AppCarousel> {
               ),
             ),
           ),
-          // Align(
-          //   alignment: Alignment.bottomCenter,
-          //   child: new Container(
-          //     color: Colors.transparent,
-          //     child: new Row(
-          //         mainAxisSize: MainAxisSize.max,
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: List.generate(widget.bannerList.length, (position) {
-          //           return Container(
-          //             height: 20,
-          //             padding: EdgeInsets.all(4),
-          //             margin: EdgeInsets.all(4),
-          //             decoration: BoxDecoration(
-          //               shape: BoxShape.circle,
-          //               color: (currentPosition == position
-          //                   ? AppColors.green
-          //                   : AppColors.grey400),
-          //             ),
-          //           );
-          //         })),
-          //   ),
-          // )
         ],
       ),
     );

@@ -10,13 +10,16 @@ import 'package:lotus_farm/app_widget/AppNeumorphicContainerWidget.dart';
 import 'package:lotus_farm/app_widget/AppQtyAddRemoveWidget.dart';
 import 'package:lotus_farm/app_widget/AppTextFeildOutlineWidget.dart';
 import 'package:lotus_farm/app_widget/app_amount.dart';
+import 'package:lotus_farm/model/order_details_data.dart';
 import 'package:lotus_farm/pages/addEditAddressPage/addEditAddressPage.dart';
 import 'package:lotus_farm/pages/address_page/address_page.dart';
 import 'package:lotus_farm/pages/check_out/check_out_view_model.dart';
+import 'package:lotus_farm/pages/order_details/order_details_page.dart';
 import 'package:lotus_farm/resources/images/images.dart';
 import 'package:lotus_farm/resources/strings/app_strings.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
+import 'package:lotus_farm/utils/constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -42,7 +45,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         ),
       ]),
       padding: const EdgeInsets.symmetric(
-          horizontal: Spacing.defaultMargin, vertical: Spacing.extraBigMargin),
+          horizontal: Spacing.defaultMargin, vertical: Spacing.mediumMargin),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -85,7 +88,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               )
             ],
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -95,7 +98,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 verticalPadding: Spacing.mediumMargin,
                 onPressed: () {
                   myPrint("Pay clicked");
-                  model.payClicked();
+                  model.payClicked(context);
+                  // _onPaymentCallback(
+                  //     false, null, "0114", "0182912883", "300.00", retry: () {
+                  //   myPrint("retry Clicked");
+                  // });
                 },
               ),
             ],
@@ -112,7 +119,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void dispose() {
     super.dispose();
-
   }
 
   @override
@@ -123,9 +129,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
       onModelReady: (model) {
         model.initData(appRepo, widget.totalAmount, widget.payingAmount,
             widget.discountAmount);
+        model.initPaymentcallBack(callback: _onPaymentCallback);
         model.fetchAddressList();
       },
-      
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
           title: Text(
@@ -277,6 +283,131 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                         //   _showDeliverySheet(context, model);
                                         // },
                                       ),
+                                      Visibility(
+                                          visible: model.deliveryRadio == 1,
+                                          child: CheckOutOptionWidget(
+                                              title:
+                                                  "Select Delivery Date time (optional)",
+                                              showEdit: false,
+                                              onEditclicked: () {
+                                                // _showBottomStoreList(
+                                                //     context, model);
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  (model.deliveryDate == null)
+                                                      ? TextButton(
+                                                          onPressed: () async {
+                                                            final deliveryDate = await showDatePicker(
+                                                                context:
+                                                                    context,
+                                                                initialDate:
+                                                                    DateTime
+                                                                        .now(),
+                                                                firstDate:
+                                                                    DateTime
+                                                                        .now(),
+                                                                lastDate: DateTime(
+                                                                    DateTime.now()
+                                                                        .year,
+                                                                    DateTime.now()
+                                                                        .month,
+                                                                    DateTime.now()
+                                                                            .day +
+                                                                        7));
+                                                            //
+                                                            if (deliveryDate !=
+                                                                null) {
+                                                              model.setDeliveryDate(
+                                                                  deliveryDate);
+                                                            }
+                                                          },
+                                                          child: Text(
+                                                              "Please Select Delivery Date"))
+                                                      : Column(
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                    "Delivery Date : ",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: AppColors
+                                                                          .grey700,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          11,
+                                                                    )),
+                                                                Text(
+                                                                    Utility.formattedDeviceMonthDate(
+                                                                        model
+                                                                            .deliveryDate),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: AppColors
+                                                                          .grey700,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      fontSize:
+                                                                          11,
+                                                                    )),
+                                                              ],
+                                                            ),
+                                                            (model.deliveryTimeSlot ==
+                                                                    null)
+                                                                ? TextButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      TimeOfDay
+                                                                          time =
+                                                                          await _selectTime(
+                                                                              context,
+                                                                              model.deliveryTimeSlot);
+                                                                      model.setDeliveryTimeSlot(
+                                                                          time);
+                                                                      // showTimeSlotSheet(
+                                                                      //     context,
+                                                                      //     model,
+                                                                      //     onTimeSelected:
+                                                                      //         (String value) {
+                                                                      //   model.setDeliveryTimeSlot(
+                                                                      //       value);
+                                                                      // });
+                                                                    },
+                                                                    child: Text(
+                                                                        "Please Select Delivery Time"))
+                                                                : Column(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                          height:
+                                                                              5),
+                                                                      Row(
+                                                                        children: [
+                                                                          Text(
+                                                                              "Delivery Time : ",
+                                                                              style: TextStyle(
+                                                                                color: AppColors.grey700,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 11,
+                                                                              )),
+                                                                          Text(
+                                                                              model.deliveryTimeSlot.format(context),
+                                                                              style: TextStyle(
+                                                                                color: AppColors.grey700,
+                                                                                fontWeight: FontWeight.normal,
+                                                                                fontSize: 11,
+                                                                              )),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                          ],
+                                                        ),
+                                                ],
+                                              ))),
                                       Visibility(
                                         visible: model.deliveryRadio == 2,
                                         child: CheckOutOptionWidget(
@@ -527,9 +658,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                         children: [
                                                           Expanded(
                                                               child: TextField(
+                                                            controller: model
+                                                                .couponController,
                                                             keyboardType:
                                                                 TextInputType
-                                                                    .number,
+                                                                    .text,
                                                             decoration:
                                                                 InputDecoration(
                                                               border:
@@ -548,7 +681,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                             ),
                                                           )),
                                                           GestureDetector(
-                                                            onTap: () {},
+                                                            onTap: () {
+                                                              if (!model
+                                                                  .couponApplied) {
+                                                                if (model
+                                                                    .couponController
+                                                                    .text
+                                                                    .isNotEmpty) {
+                                                                  model
+                                                                      .applyCoupon();
+                                                                } else {
+                                                                  Utility.showSnackBar(
+                                                                      context,
+                                                                      "Please enter valid coupon code");
+                                                                }
+                                                              } else {
+                                                                model
+                                                                    .clearCoupon();
+                                                              }
+                                                            },
                                                             child: Container(
                                                               decoration:
                                                                   BoxDecoration(
@@ -572,7 +723,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                                         right:
                                                                             15),
                                                                 child: Text(
-                                                                  "APPLY",
+                                                                  (!model.couponApplied)
+                                                                      ? "APPLY"
+                                                                      : "REMOVE",
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -586,6 +739,22 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                         ],
                                                       ),
                                                     ),
+                                                    Visibility(
+                                                        visible:
+                                                            model.couponApplied,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            Text(
+                                                                model
+                                                                    .couponText,
+                                                                style: TextStyle(
+                                                                    color: AppColors
+                                                                        .green))
+                                                          ],
+                                                        ))
                                                   ],
                                                 ),
                                               ),
@@ -598,12 +767,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 ),
                               ),
                             ),
-                            _getBottomAddCart(model),
+                            (MediaQuery.of(context).viewInsets.bottom == 0)
+                                ? _getBottomAddCart(model)
+                                : Container(),
                           ],
                         ),
                       ),
       ),
     );
+  }
+
+  Future<TimeOfDay> _selectTime(
+      BuildContext context, TimeOfDay deliveryTime) async {
+    
+    final TimeOfDay picked_s = await showTimePicker(
+        context: context,
+        initialTime: deliveryTime??TimeOfDay(hour: TimeOfDay.now().hour + 1, minute: TimeOfDay.now().minute+30),
+        builder: (BuildContext context, Widget child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child,
+          );
+        });
+
+    if (picked_s != null && picked_s != deliveryTime) deliveryTime = picked_s;
+    return deliveryTime;
   }
 
   void showTimeSlotSheet(BuildContext context, CheckOutViewModel model,
@@ -833,6 +1021,71 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ],
           );
         });
+  }
+
+  _onPaymentCallback(bool isSucess, OrderDetailsData orderDetailsData,
+      String orderId, String paymentId, String payingAmount,
+      {Function retry}) async {
+    final icon = (isSucess) ? Icons.check : Icons.info;
+    final color = (isSucess) ? AppColors.green : AppColors.redAccent;
+    final title = (isSucess)
+        ? "Order of ${AppStrings.rupee} ${payingAmount} has been done Successfully"
+        : "Transaction of ${AppStrings.rupee} $payingAmount has been intrrupted by something!";
+    final desc = (isSucess) ? AppColors.green : AppColors.redAccent;
+    showModalBottomSheet(
+      context: context,
+      // isDismissible: false,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: Spacing.defaultMargin, vertical: Spacing.defaultMargin),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(icon, color: color, size: 80),
+            SizedBox(height: 20),
+            Text(title,
+                textAlign: TextAlign.center,
+                style: extraBigTextStyle.copyWith(
+                  fontFamily: "",
+                )),
+            SizedBox(height: 5),
+            Visibility(
+              visible: !isSucess,
+              child: Text(
+                "Please click retry button if money has been deducted from bank then contact to Lotus Farms online helpline number.",
+                textAlign: TextAlign.center,
+                style: smallTextStyle,
+              ),
+            ),
+            SizedBox(height: 25),
+            FlatButton(
+                onPressed: () async {
+                  if (isSucess) {
+                    await Utility.pushToNext(OrderDetailsPage(), context);
+                    Utility.pushToDashboard(context, 0);
+                  } else {
+                    Navigator.pop(context);
+                    retry();
+                  }
+                },
+                textColor: AppColors.white,
+                color: AppColors.blackGrey,
+                child: Text((isSucess) ? "order id : #$orderId" : "Retry")),
+            SizedBox(height: 10),
+            FlatButton(
+                onPressed: () {
+                  Utility.pushToDashboard(context, 0);
+                },
+                textColor: color,
+                child: Text("Back to dashboard")),
+          ],
+        ),
+      ),
+    );
   }
 }
 

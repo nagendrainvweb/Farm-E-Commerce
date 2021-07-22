@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/model/address_data.dart';
@@ -10,32 +11,47 @@ import 'package:lotus_farm/pages/addEditAddressPage/addEditAddressPage.dart';
 import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/resources/strings/app_strings.dart';
 import 'package:lotus_farm/services/api_service.dart';
+import 'package:lotus_farm/utils/api_error_exception.dart';
+import '../../app/app_helper.dart';
+import '../../app/locator.dart';
 import '../../utils/constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-class CheckOutViewModel extends BaseViewModel {
+import '../../utils/utility.dart';
+import '../../utils/utility.dart';
+import '../../utils/utility.dart';
+import '../../utils/utility.dart';
+
+class CheckOutViewModel extends BaseViewModel with AppHelper {
   int _paymentMethodRadio = 1;
   int _deliveryRadio = 1;
   final _apiService = locator<ApiService>();
   final _navigationService = locator<NavigationService>();
   final _snackBarService = locator<SnackbarService>();
   final _dialogService = locator<DialogService>();
+  String _orderId;
   Razorpay _razorpay;
+
+  final couponController = TextEditingController();
 
   bool _loading = true;
   bool _hasError = false;
+  bool _couponApplied = false;
+  String _couponText = "";
   List<AddressData> _addressList;
   List<StoreData> _storeList;
   AddressData _addressData;
   AppRepo _appRepo;
   StoreData _storeData;
   DateTime _pickUpDate;
+  DateTime _deliveryDate;
+  TimeOfDay _deliveryTimeSlot;
   String _timeSlot;
   String _totalAmount, _payingAmount, _discountAmount;
- 
+  Function onPaymentCallback;
 
   bool get loading => _loading;
   bool get hasError => _hasError;
@@ -44,10 +60,14 @@ class CheckOutViewModel extends BaseViewModel {
   List<StoreData> get storeList => _storeList;
   StoreData get storeData => _storeData;
   DateTime get pickUpDate => _pickUpDate;
+  DateTime get deliveryDate => _deliveryDate;
+  TimeOfDay get deliveryTimeSlot => _deliveryTimeSlot;
   String get timeSlot => _timeSlot;
   String get totalAmount => _totalAmount;
   String get payingAmount => _payingAmount;
   String get discountAmount => _discountAmount;
+  bool get couponApplied => _couponApplied;
+  String get couponText => _couponText;
 
   int get paymentMethodRadio => _paymentMethodRadio;
   int get deliveryRadio => _deliveryRadio;
@@ -125,6 +145,7 @@ class CheckOutViewModel extends BaseViewModel {
     _totalAmount = totalAmount;
     _payingAmount = payingAmount;
     _discountAmount = discountAmount;
+
     notifyListeners();
     if (_appRepo.storeList.isNotEmpty) {
       _storeList = _appRepo.storeList;
@@ -151,10 +172,35 @@ class CheckOutViewModel extends BaseViewModel {
     }
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+  initPaymentcallBack({Function callback}) {
+    this.onPaymentCallback = callback;
+    notifyListeners();
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     // Fluttertoast.showToast(
     //     msg: "SUCCESS: " + response.paymentId, timeInSecForIos: 4);
-    myPrint("SUCCESS: " + response.paymentId);
+    //myPrint("SUCCESS: " + response.paymentId);
+    updatePayment(
+        _orderId, response.paymentId, Constants.SUCCESS, _payingAmount);
+  }
+
+  updatePayment(String orderId, String paymentId, String status,
+      String payingAmount) async {
+    try {
+      showProgressDialogService("Please wait...");
+      final payResponse = await _apiService.updatePayment(
+          _orderId, paymentId, status, payingAmount);
+      hideProgressDialogService();
+
+      onPaymentCallback((payResponse.status == Constants.SUCCESS),
+          payResponse.data, orderId, paymentId, payingAmount, retry: () {
+        updatePayment(orderId, paymentId, status, payingAmount);
+      });
+    } catch (e) {
+      hideProgressDialogService();
+      myPrint(e.toString());
+    }
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -162,6 +208,7 @@ class CheckOutViewModel extends BaseViewModel {
     //     msg: "ERROR: " + response.code.toString() + " - " + response.message,
     //     timeInSecForIos: 4);
     myPrint("ERROR: " + response.code.toString() + " - " + response.message);
+    _snackBarService.showSnackbar(message: response.message);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -182,8 +229,18 @@ class CheckOutViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  void setDeliveryDate(DateTime deliveryDate) {
+    _deliveryDate = deliveryDate;
+    notifyListeners();
+  }
+
   void setTimeSlot(String timeSlot) {
     _timeSlot = timeSlot;
+    notifyListeners();
+  }
+
+  void setDeliveryTimeSlot(TimeOfDay deliveryTimeSlot) {
+    _deliveryTimeSlot = deliveryTimeSlot;
     notifyListeners();
   }
 
@@ -192,8 +249,57 @@ class CheckOutViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void payClicked() async {
-    final user_id = await Prefs.userId;
+  void payClicked(BuildContext context) async {
+    print("hey i am called");
+    // myPrint("hey i am called");
+
+    //
+    try {
+      showProgressDialogService("Please wait...");
+      final pickupDateTime = (pickUpDate != null)
+          ? Utility.formattedServerDate(pickUpDate) + " " + timeSlot
+          : "";
+      final deliveryDateTime = (deliveryDate != null)
+          ? Utility.formattedServerDate(deliveryDate) + " " + deliveryTimeSlot.format(context)
+          : "";
+      myPrint('pickup date $pickupDateTime');
+      final response = await _apiService.placeOrder(
+          _addressData.addressId,
+          _addressData.addressId,
+          "",
+          "",
+          _discountAmount,
+        (_deliveryRadio == 1)?deliveryDateTime:  pickupDateTime,
+          "",
+          "",
+          _addressData.latitude,
+          _addressData.longitude,
+          (deliveryRadio == 1) ? "dunzo" : "pickup");
+
+      hideProgressDialogService();
+      if (response.status == Constants.SUCCESS) {
+        _orderId = response.data["order_id"];
+        _startRazorPay(response.data["order_id"],
+            double.parse(response.data["amount"]).toInt());
+      } else {
+        _dialogService.showCustomDialog(
+            variant: DialogType.error,
+            title: "Error",
+            description: response.message,
+            mainButtonTitle: "OK");
+      }
+    } catch (e) {
+      hideProgressDialogService();
+      myPrint(e.toString());
+      _dialogService.showCustomDialog(
+          variant: DialogType.error,
+          title: "Error",
+          description: SOMETHING_WRONG_TEXT,
+          mainButtonTitle: "OK");
+    }
+  }
+
+  _startRazorPay(String orderId, int amount) async {
     final name = await Prefs.name;
     final last_name = await Prefs.surName;
     final number = await Prefs.mobileNumber;
@@ -203,7 +309,7 @@ class CheckOutViewModel extends BaseViewModel {
       'amount': int.parse(_payingAmount) * 100,
       'name': 'Lotus farms',
       'description': '',
-      'order_id': '',
+      //'order_id': '$orderId',
       'timeout': 120, // in seconds
       'prefill': {
         'contact': '$number',
@@ -212,5 +318,34 @@ class CheckOutViewModel extends BaseViewModel {
       }
     };
     _razorpay.open(options);
+  }
+
+  void applyCoupon() async {
+    try {
+      showProgressDialogService("Please wait...");
+      final response =
+          await _apiService.verifyCoupons(couponController.text, _payingAmount);
+      hideProgressDialogService();
+      _couponApplied = true;
+      _couponText = "Coupon applied sucessfully";
+      final discount = double.parse(response.data.discountAmount).toInt();
+      _discountAmount = discount.toString();
+      _payingAmount = (int.parse(_payingAmount) - discount.toInt()).toString();
+      notifyListeners();
+    } catch (e) {
+      hideProgressDialogService();
+      _dialogService.showCustomDialog(
+          variant: DialogType.error,
+          title: "Error",
+          description: "${e.message}",
+          mainButtonTitle: "OK");
+    }
+  }
+
+  void clearCoupon() {
+    couponController.text = "";
+    _couponApplied = false;
+    _couponText = "";
+    notifyListeners();
   }
 }

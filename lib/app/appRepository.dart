@@ -23,6 +23,7 @@ class AppRepo extends ChangeNotifier {
 
   DashboardData _dashboardData;
   List<Product> _productList;
+  List<Product> _preOrderList;
   List<OffersImg> _offerImgList;
   List<StateData> _stateList = [];
   List<StoreData> _storeList = [];
@@ -33,6 +34,7 @@ class AppRepo extends ChangeNotifier {
   bool get introDone => _introDone;
   DashboardData get dashboardData => _dashboardData;
   List<Product> get productList => _productList;
+  List<Product> get preOrderList => _preOrderList;
   List<OffersImg> get offerList => _offerImgList;
   List<StateData> get stateList => _stateList;
   List<StoreData> get storeList => _storeList;
@@ -122,6 +124,11 @@ class AppRepo extends ChangeNotifier {
 
   setProductList(List<Product> list) {
     _productList = list;
+    notifyListeners();
+  }
+
+    setPreOrderList(List<Product> list) {
+    _preOrderList = list;
     notifyListeners();
   }
 }
