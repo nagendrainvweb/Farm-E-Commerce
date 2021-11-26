@@ -14,7 +14,7 @@ class HomeViewModel extends BaseViewModel {
   int get currentBottomIndex => _currentBottomIndex;
 
   void onBottomButtonClicked(int value) async {
-    if (value == 2 || value == 3) {
+    if ( value == 3) {
       final login = await Prefs.login;
       if (login) {
         _currentBottomIndex = value;

@@ -57,7 +57,10 @@ class AddEditAddressViewModel extends BaseViewModel with AppHelper {
       lastNameController.text = lastName;
       numberController.text = number;
       emailIdController.text = email;
+          stateController.text = "Karnataka";
+    cityController.text = "Bengaluru";
     }
+
     notifyListeners();
   }
 

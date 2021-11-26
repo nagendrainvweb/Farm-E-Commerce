@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,6 +6,7 @@ import 'package:lotus_farm/model/UserData.dart';
 import 'package:lotus_farm/model/address_data.dart';
 import 'package:lotus_farm/model/basic_response.dart';
 import 'package:lotus_farm/model/dashboard_data.dart';
+import 'package:lotus_farm/model/notification_data.dart';
 import 'package:lotus_farm/model/offerResponse.dart';
 import 'package:lotus_farm/model/order_details_data.dart';
 import 'package:lotus_farm/model/pastOrderData.dart';
@@ -28,9 +30,10 @@ class ApiService extends BaseRequest {
   Future<BasicResponse<String>> sendOtp(mobile, otp) async {
     try {
       final commonFeilds = _getCommonFeild();
-      final body = {"mobile_number": mobile, "otp": otp};
+      final body = {"mobile": mobile, "otp": otp};
       body.addAll(commonFeilds);
-      final request = await http.post(UrlList.SEND_OTP, body: body);
+      myPrint(body.toString());
+      final request = await http.post(Uri.parse(UrlList.SEND_OTP), body: body);
       final jsonResponse = json.decode(request.body);
       myPrint("otp response : ${request.body.toString()}");
       return BasicResponse.fromJson(json: jsonResponse, data: "");
@@ -45,7 +48,8 @@ class ApiService extends BaseRequest {
   Future<BasicResponse<String>> fetchUpdate() async {
     try {
       final commonFeilds = _getCommonFeild();
-      final request = await http.post(UrlList.CHECK_UPDATE, body: commonFeilds);
+      final request =
+          await http.post(Uri.parse(UrlList.CHECK_UPDATE), body: commonFeilds);
       myPrint(request.toString());
       final jsonResponse = json.decode(request.body);
       return BasicResponse.fromJson(json: jsonResponse, data: "");
@@ -64,8 +68,8 @@ class ApiService extends BaseRequest {
         "mobileNumber": number,
       };
       body.addAll(commonFeilds);
-      final request =
-          await http.post(UrlList.REGISTER_TOKEN, headers: headers, body: body);
+      final request = await http.post(Uri.parse(UrlList.REGISTER_TOKEN),
+          headers: headers, body: body);
       if (request.statusCode == 200) {
         final jsonResponse = json.decode(request.body);
         return BasicResponse.fromJson(json: jsonResponse, data: "");
@@ -82,10 +86,12 @@ class ApiService extends BaseRequest {
   Future<BasicResponse<User>> fetchUserlogin(String number) async {
     try {
       final commonFeilds = _getCommonFeild();
-      final body = {"mobileNumber": number, "fcm_token": "xzbdguygduy"};
+      final fcmToken = await Prefs.fcmToken;
+      final body = {"mobileNumber": number, "fcm_token": "$fcmToken"};
       body.addAll(commonFeilds);
+      myPrint(body.toString());
       final request = await http
-          .post(UrlList.USER_LOGIN, body: body)
+          .post(Uri.parse(UrlList.USER_LOGIN), body: body)
           .timeout(Duration(seconds: 30));
       myPrint(request.body.toString());
 
@@ -111,7 +117,8 @@ class ApiService extends BaseRequest {
       final commonFeilds = _getCommonFeild();
       final body = {"user_id": '$user_id', "fcm_token": '$fcm_token'};
       body.addAll(commonFeilds);
-      final request = await http.post(UrlList.REGISTER_TOKEN, body: body);
+      final request =
+          await http.post(Uri.parse(UrlList.REGISTER_TOKEN), body: body);
       myPrint(request.body.toString());
       final jsonResponse = json.decode(request.body);
       return BasicResponse.fromJson(json: jsonResponse, data: "");
@@ -141,7 +148,7 @@ class ApiService extends BaseRequest {
     myPrint(UrlList.USER_REGISTRATION);
     try {
       final request =
-          await http.post(UrlList.USER_REGISTRATION, body: postJson);
+          await http.post(Uri.parse(UrlList.USER_REGISTRATION), body: postJson);
       myPrint(request.body);
       if (request.statusCode == 200) {
         final jsonResponse = json.decode(request.body);
@@ -170,7 +177,7 @@ class ApiService extends BaseRequest {
         "user_id": "$userId",
       };
       postJson.addAll(commonFeild);
-      final request = await http.post(UrlList.FETCH_DASHBOARD,
+      final request = await http.post(Uri.parse(UrlList.FETCH_DASHBOARD),
           body: postJson, headers: await _getHeader());
       myPrint(request.body);
       final jsonResponse = json.decode(request.body);
@@ -188,14 +195,15 @@ class ApiService extends BaseRequest {
       throw Exception(e.toString());
     }
   }
-  
 
   Future<BasicResponse<List<Product>>> fetchAllProducts() async {
     try {
-      final request = await http.post(
-        UrlList.FETCH_ALL_PRODICTS,
-      );
+      final userId = await Prefs.userId;
+      final body = {"user_id": "$userId"};
+      final request =
+          await http.post(Uri.parse(UrlList.FETCH_ALL_PRODICTS), body: body);
       myPrint(request.body);
+
       final jsonResponse = json.decode(request.body);
       final data = jsonResponse[UrlConstants.DATA];
       final response =
@@ -218,11 +226,13 @@ class ApiService extends BaseRequest {
     }
   }
 
-    Future<BasicResponse<List<Product>>> fetchPreOrderList() async {
+  Future<BasicResponse<List<Product>>> fetchPreOrderList() async {
     try {
-      final request = await http.post(
-        UrlList.PRE_ORDER_LIST,
-      );
+      final userId = await Prefs.userId;
+      final body = {"user_id": "$userId"};
+      myPrint(body.toString());
+      final request =
+          await http.post(Uri.parse(UrlList.PRE_ORDER_LIST), body: body);
       myPrint(request.body);
       final jsonResponse = json.decode(request.body);
       final data = jsonResponse[UrlConstants.DATA];
@@ -254,7 +264,7 @@ class ApiService extends BaseRequest {
     };
     postJson.addAll(commonFeilds);
     try {
-      final request = await http.post(UrlList.FETCH_OFFERS,
+      final request = await http.post(Uri.parse(UrlList.FETCH_OFFERS),
           body: postJson, headers: await _getHeader());
       final response = json.decode(request.body);
       var data = response[UrlConstants.DATA];
@@ -286,7 +296,7 @@ class ApiService extends BaseRequest {
     postJson.addAll(commonFeilds);
     myPrint(postJson.toString());
     try {
-      final request = await http.post(UrlList.UPDATE_USER_DETAILS,
+      final request = await http.post(Uri.parse(UrlList.UPDATE_USER_DETAILS),
           body: postJson, headers: await _getHeader());
       myPrint(request.body);
       final jsonResponse = json.decode(request.body);
@@ -310,7 +320,7 @@ class ApiService extends BaseRequest {
       };
       postJson.addAll(commonFeilds);
       myPrint(postJson.toString());
-      final request = await http.post(UrlList.FETCH_USER_DETAILS,
+      final request = await http.post(Uri.parse(UrlList.FETCH_USER_DETAILS),
           headers: await _getHeader(), body: postJson);
       myPrint(request.body);
       if (request.statusCode == 200) {
@@ -345,7 +355,7 @@ class ApiService extends BaseRequest {
     postJson.addAll(commonFeilds);
     myPrint(postJson.toString());
     try {
-      final result = await http.post(UrlList.FETCH_ADDRESSES,
+      final result = await http.post(Uri.parse(UrlList.FETCH_ADDRESSES),
           headers: await _getHeader(), body: postJson);
       myPrint(result.body);
       final response = json.decode(result.body);
@@ -383,7 +393,7 @@ class ApiService extends BaseRequest {
     postJson.addAll(commonFeilds);
     myPrint(postJson.toString());
     try {
-      final result = await http.post(UrlList.FETCH_PAST_ORDERS,
+      final result = await http.post(Uri.parse(UrlList.FETCH_PAST_ORDERS),
           headers: await _getHeader(), body: postJson);
       myPrint(result.body);
       final response = json.decode(result.body);
@@ -416,14 +426,14 @@ class ApiService extends BaseRequest {
     postJson.addAll(commonFeilds);
     myPrint(postJson.toString());
     try {
-      final result = await http.post(UrlList.FETCH_ORDER_DETAILS,
+      final result = await http.post(Uri.parse(UrlList.FETCH_ORDER_DETAILS),
           headers: await _getHeader(), body: postJson);
       myPrint(result.body);
       final response = json.decode(result.body);
       final basicResponse =
           BasicResponse<OrderDetailsData>.fromJson(json: response);
       if (basicResponse.status == Constants.SUCCESS) {
-        var data = response["data"];
+        OrderDetailsData data = OrderDetailsData.fromJson(response["data"]);
         basicResponse.data = data;
       } else {
         throw Exception(basicResponse..message);
@@ -446,7 +456,8 @@ class ApiService extends BaseRequest {
       postJson.addAll(commonFeilds);
       myPrint(postJson.toString());
 
-      final result = await http.post(UrlList.FETCH_SEARCH_DATA, body: postJson);
+      final result =
+          await http.post(Uri.parse(UrlList.FETCH_SEARCH_DATA), body: postJson);
       myPrint(result.body);
       final response = json.decode(result.body);
       final basicResponse =
@@ -477,8 +488,8 @@ class ApiService extends BaseRequest {
     postJson.addAll(commonFeilds);
     myPrint(postJson.toString());
     try {
-      final result =
-          await http.post(UrlList.FETCH_PRODUCT_DETAILS, body: postJson);
+      final result = await http.post(Uri.parse(UrlList.FETCH_PRODUCT_DETAILS),
+          body: postJson);
       myPrint(result.body.toString());
       final response = json.decode(result.body);
       final basicResponse =
@@ -503,9 +514,10 @@ class ApiService extends BaseRequest {
       "user_id": '$userId',
     };
     postJson.addAll(commonFeilds);
+    myPrint(postJson.toString());
 
     try {
-      final request = await http.post(UrlList.FETCH_CART_DATA,
+      final request = await http.post(Uri.parse(UrlList.FETCH_CART_DATA),
           headers: await _getHeader(), body: postJson);
       final jsonResponse = json.decode(request.body);
       final basicResponse =
@@ -540,7 +552,7 @@ class ApiService extends BaseRequest {
     postJson.addAll(commonFeilds);
     myPrint(postJson.toString());
     try {
-      final request = await http.post(UrlList.ADD_TO_CART,
+      final request = await http.post(Uri.parse(UrlList.ADD_TO_CART),
           headers: await _getHeader(), body: postJson);
       myPrint(request.body);
       final response = json.decode(request.body);
@@ -564,7 +576,7 @@ class ApiService extends BaseRequest {
     };
     postJson.addAll(commonFeilds);
     myPrint(postJson.toString());
-    final request = await http.post(UrlList.REMOVE_FROM_CART,
+    final request = await http.post(Uri.parse(UrlList.REMOVE_FROM_CART),
         headers: await _getHeader(), body: postJson);
     try {
       final jsonResponse = json.decode(request.body);
@@ -579,7 +591,7 @@ class ApiService extends BaseRequest {
 
   Future<BasicResponse<List<StateData>>> fetchStateList() async {
     try {
-      final request = await http.post(UrlList.FETCH_STATE_LIST);
+      final request = await http.post(Uri.parse(UrlList.FETCH_STATE_LIST));
       final response = json.decode(request.body);
       final basicResponse =
           BasicResponse<List<StateData>>.fromJson(json: response);
@@ -614,7 +626,7 @@ class ApiService extends BaseRequest {
     // final postJson =
     //     {"user_id": $userid,"address_id":$address_id,"name":$name,"isDetault":$isDetault,"type":$type,"number":$number,"email_id":$email_id,"flat_no":$flat_no,"street_name":$street_name,"area":$area,"landmark":$landmark,"city":$city,"state":$state,"pincode":$pincode,"appVersion": $appversion, "device": $device};
     try {
-      final request = await http.post(UrlList.ADD_EDIT_ADDRESS,
+      final request = await http.post(Uri.parse(UrlList.ADD_EDIT_ADDRESS),
           headers: await _getHeader(), body: postJson);
       myPrint(request.body.toString());
       final jsonResponse = json.decode(request.body);
@@ -636,7 +648,7 @@ class ApiService extends BaseRequest {
     postJson.addAll(commonfeild);
     myPrint(postJson.toString());
     try {
-      final request = await http.post(UrlList.DELETE_ADDRESS,
+      final request = await http.post(Uri.parse(UrlList.DELETE_ADDRESS),
           headers: await _getHeader(), body: postJson);
       myPrint(request.body.toString());
       final jsonResponse = json.decode(request.body);
@@ -666,7 +678,7 @@ class ApiService extends BaseRequest {
     myPrint(json.encode(body.toString()));
     // calling api
     try {
-      final request = await http.post(UrlList.UPDATE_CART,
+      final request = await http.post(Uri.parse(UrlList.UPDATE_CART),
           body: postBody, headers: await _getHeader());
       myPrint(request.body.toString());
       final jsonRequest = json.decode(request.body);
@@ -694,12 +706,14 @@ class ApiService extends BaseRequest {
     postJson.addAll(common);
     myPrint(postJson.toString());
     try {
-      final request = await http.post(UrlList.FETCH_PRODUCTS,
+      final request = await http.post(Uri.parse(UrlList.FETCH_PRODUCTS),
           headers: await _getHeader(), body: postJson);
+      myPrint(request.body);
       final jsonResponse = json.decode(request.body);
       final basicResponse =
           BasicResponse<List<Product>>.fromJson(json: jsonResponse);
       var data = jsonResponse[UrlConstants.DATA];
+      final links = data["links"];
       final List<Product> list = [];
       if (data != null) {
         final jsonList = data["items"];
@@ -708,6 +722,7 @@ class ApiService extends BaseRequest {
         }
       }
       basicResponse.data = list;
+      basicResponse.links = Links.fromJson(links);
       return basicResponse;
     } on SocketException catch (e) {
       throw ApiErrorException(NO_INTERNET_CONN);
@@ -725,7 +740,7 @@ class ApiService extends BaseRequest {
     postJson.addAll(common);
     myPrint(postJson.toString());
     try {
-      final request = await http.post(UrlList.STORE_LIST,
+      final request = await http.post(Uri.parse(UrlList.STORE_LIST),
           headers: await _getHeader(), body: postJson);
       final jsonResponse = json.decode(request.body);
       final basicResponse =
@@ -746,6 +761,173 @@ class ApiService extends BaseRequest {
     }
   }
 
+  Future<BasicResponse<List<NotificationData>>> fetchNotification() async {
+    final userId = await Prefs.userId;
+    final common = _getCommonFeild();
+    final postJson = {
+      "user_id": '$userId',
+    };
+    postJson.addAll(common);
+    myPrint(postJson.toString());
+    try {
+      final request = await http.post(Uri.parse(UrlList.STORE_LIST),
+          headers: await _getHeader(), body: postJson);
+      final jsonResponse = json.decode(request.body);
+      final basicResponse =
+          BasicResponse<List<NotificationData>>.fromJson(json: jsonResponse);
+      if (basicResponse.status == Constants.SUCCESS) {
+        var data = jsonResponse[UrlConstants.DATA];
+        final List<NotificationData> list = [];
+        if (data != null) {
+          for (var map in data) {
+            list.add(NotificationData.fromJson(map));
+          }
+        }
+        basicResponse.data = list;
+        return basicResponse;
+      }
+      throw ApiErrorException(basicResponse.message);
+    } on SocketException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<BasicResponse<String>> deleteNotification(
+      String notificationId) async {
+    final commonBody = _getCommonFeild();
+    final user_id = await Prefs.userId;
+    final token = await Prefs.token;
+    final body = {
+      Constants.USERID: "$user_id",
+      Constants.NOTIFICATION_ID: "$notificationId"
+    };
+    body.addAll(commonBody);
+    myPrint(body.toString());
+    try {
+      final result = await http.post(Uri.parse(UrlList.DELETE_NOTIFICATION),
+          body: body, headers: await _getHeader());
+      myPrint(result.body.toString());
+      final response = json.decode(result.body);
+      final basicResponse =
+          BasicResponse<String>.fromJson(json: response, data: "");
+      if (basicResponse.status == Constants.SUCCESS) {
+        return basicResponse;
+      }
+      throw ApiErrorException(basicResponse.message);
+    } on SocketException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } on TimeoutException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } on Exception catch (e) {
+      myPrint(e.toString());
+      throw ApiErrorException(SOMETHING_WRONG_TEXT);
+    }
+  }
+
+  Future<BasicResponse<String>> readNotifications(
+      String notificationIds) async {
+    final userid = await Prefs.userId;
+
+    final common = _getCommonFeild();
+    final postJson = {
+      "user_id": '$userid',
+      'notification_ids': '$notificationIds'
+    };
+    postJson.addAll(common);
+    myPrint(postJson.toString());
+    try {
+      final request = await http.post(Uri.parse(UrlList.READ_NOTIFICATIONS),
+          body: postJson, headers: await _getHeader());
+      final response = json.decode(request.body);
+      final basicResponse = BasicResponse<String>.fromJson(json: response);
+      if (basicResponse.status == Constants.SUCCESS) {
+        return basicResponse;
+      }
+      throw ApiErrorException(basicResponse.message);
+      // var data = response[UrlConstants.DATA];
+      // List<NotificationData> notificationList = List();
+      // if (data != null) {
+      //   for(var e in data){
+      //     notificationList.add(NotificationData.fromJson(e));
+      //   }
+      // }
+      //return BasicResponse.fromJson(json: response, data: "");
+    } catch (e) {
+      myPrint("error in api provider");
+      throw Exception(e);
+    }
+  }
+
+  Future<BasicResponse<List<Product>>> fetchOrderProductReview() async {
+    final userId = await Prefs.userId;
+    final commonFeilds = _getCommonFeild();
+    final postJson = {
+      "user_id": '$userId',
+    };
+    postJson.addAll(commonFeilds);
+
+    try {
+      final request = await http.post(
+          Uri.parse(UrlList.FETCH_ORDER_PRODUCT_REVIEW),
+          headers: await _getHeader(),
+          body: postJson);
+      final jsonResponse = json.decode(request.body);
+      final basicResponse =
+          BasicResponse<List<Product>>.fromJson(json: jsonResponse);
+      final data = jsonResponse[UrlConstants.DATA];
+      List<Product> productlist = [];
+      if (data != null) {
+        /// List itemsArray = data['product'];
+        for (var i = 0; i < data.length; i++) {
+          productlist.add(Product.fromJson(data[i]));
+        }
+        basicResponse.data = productlist;
+      }
+      return basicResponse;
+    } on SocketException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<BasicResponse<String>> addReview(
+      var productId, var rating, var reviewTitle, var review) async {
+    final userid = await Prefs.userId;
+    final token = await Prefs.token;
+    final firstName = await Prefs.name;
+    Map<String, String> headers = {Constants.AUTH: "$token"};
+    final postJson = {
+      "user_id": '$userid',
+      "product_id": '$productId',
+      "rating": '$rating',
+      "review_title": '$reviewTitle',
+      "review": '$review',
+      "name": "$firstName"
+    };
+    myPrint(postJson.toString());
+
+    try {
+      final request = await http.post(Uri.parse(UrlList.ADD_REVIEW),
+          headers: headers, body: postJson);
+      final jsonResponse = json.decode(request.body);
+      final basicResponse = BasicResponse<String>.fromJson(json: jsonResponse);
+      myPrint(request.body.toString());
+
+      if (basicResponse.status == Constants.SUCCESS) {
+        return basicResponse;
+      } else {
+        throw ApiErrorException(basicResponse.message);
+      }
+    } on SocketException catch (e) {
+      throw ApiErrorException(NO_INTERNET_CONN);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   Future<BasicResponse<Map<String, dynamic>>> placeOrder(
       String billingAddressId,
       String shippingAddressId,
@@ -757,7 +939,8 @@ class ApiService extends BaseRequest {
       String pickupLng,
       String droplat,
       String droplng,
-      String shippingType) async {
+      String shippingType,
+      String method) async {
     final userId = await Prefs.userId;
     final common = _getCommonFeild();
     final postJson = {
@@ -772,12 +955,13 @@ class ApiService extends BaseRequest {
       "pickup_lng": "$pickupLng",
       "drop_lat": "$droplat",
       "drop_lng": "$droplng",
-      "shipping_type": "$shippingType"
+      "shipping_type": "$shippingType",
+      "order_type": "$method"
     };
     postJson.addAll(common);
     myPrint(postJson.toString());
     try {
-      final request = await http.post(UrlList.PLACE_ORDER,
+      final request = await http.post(Uri.parse(UrlList.PLACE_ORDER),
           headers: await _getHeader(), body: postJson);
       myPrint(request.body);
       final jsonResponse = json.decode(request.body);
@@ -810,7 +994,7 @@ class ApiService extends BaseRequest {
     postJson.addAll(common);
     myPrint(postJson.toString());
     try {
-      final request = await http.post(UrlList.UPDATE_PAYMENT,
+      final request = await http.post(Uri.parse(UrlList.UPDATE_PAYMENT),
           body: postJson, headers: await _getHeader());
       print(request.body.toString());
       final jsonResponse = json.decode(request.body);
@@ -846,7 +1030,7 @@ class ApiService extends BaseRequest {
     myPrint(postJson.toString());
 
     try {
-      final request = await http.post(UrlList.VERIFY_COUPON_CODE,
+      final request = await http.post(Uri.parse(UrlList.VERIFY_COUPON_CODE),
           body: postJson, headers: await _getHeader());
       final response = json.decode(request.body);
       print(request.body);
@@ -861,6 +1045,91 @@ class ApiService extends BaseRequest {
     } catch (e) {
       myPrint("inside catch");
       throw ApiErrorException(e);
+    }
+  }
+
+  Future<BasicResponse<String>> sendQuery(name, email, number, desc) async {
+    final userid = await Prefs.userId;
+    final common = _getCommonFeild();
+
+    final postJson = {
+      "user_id": '$userid',
+      "name": '$name',
+      "email": '$email',
+      "number": '$number',
+      "query": '$desc',
+    };
+    postJson.addAll(common);
+    myPrint(postJson.toString());
+    final request = await http.post(Uri.parse(UrlList.SEND_ABOUT_US_QUERY),
+        headers: headers, body: postJson);
+    print(request.body);
+    try {
+      final jsonResponse = json.decode(request.body);
+      return BasicResponse.fromJson(json: jsonResponse, data: "");
+    } catch (e) {
+      return throw Exception(e);
+    }
+  }
+
+  Future<BasicResponse<String>> fetchCMSData(String pageName) async {
+    final common = _getCommonFeild();
+    final postJson = {
+      "page_name": '$pageName',
+    };
+    postJson.addAll(common);
+    myPrint(postJson.toString());
+    final request = await http.post(Uri.parse(UrlList.CMS_DATA),
+        headers: headers, body: postJson);
+    print(request.body);
+    try {
+      final jsonResponse = json.decode(request.body);
+      if (jsonResponse[Constants.STATUS] == Constants.SUCCESS) {
+        if (pageName == "FAQ") {
+          await Prefs.setFaq(jsonResponse['page_content']);
+        } else if (pageName == "Terms & Condition") {
+          await Prefs.setTerms(jsonResponse['page_content']);
+        } else {
+          await Prefs.setPrivacy(jsonResponse['page_content']);
+        }
+        return BasicResponse.fromJson(
+            json: jsonResponse, data: jsonResponse['page_content']);
+      } else {
+        throw ApiErrorException(jsonResponse[Constants.MESSAGE]);
+      }
+    } catch (e) {
+      return throw Exception(e);
+    }
+  }
+
+  Future<BasicResponse<OrderDetailsData>> updatePaymentFree(
+      String order_id, String payment_amount, String coupon_code) async {
+    final userid = await Prefs.userId;
+    final token = await Prefs.token;
+
+    final postJson = {
+      "user_id": "$userid",
+      "order_id": "$order_id",
+      "payment_amount": "$payment_amount",
+      "coupon_code": "$coupon_code",
+    };
+    final common = _getCommonFeild();
+    postJson.addAll(common);
+    myPrint(postJson.toString());
+    try {
+      final request = await http.post(Uri.parse(UrlList.UPDATE_PAYMENT_FREE),
+          body: postJson, headers: await _getHeader());
+      myPrint(request.body.toString());
+      final response = json.decode(request.body);
+
+      var data = response[UrlConstants.DATA];
+      if (data != null) {
+        data = OrderDetailsData.fromJson(data);
+        return BasicResponse.fromJson(json: response, data: data);
+      }
+      throw ApiErrorException(response[Constants.MESSAGE]);
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 

@@ -14,7 +14,7 @@ class Constants {
   static final SKIP_LOGIN = "skip_login";
   static final LAST_NAME = "last_name";
   static final IS_LOGIN = "isLogin";
-  static final TOKEN = "fcm_token";
+  static final TOKEN = "token";
   static final SUCCESS = "success";
   static final USERID = "user_id";
   static final PROFILE_PIC = "profile_pic";
@@ -48,6 +48,10 @@ class Constants {
   static final DATA = "data";
   static final STATE_LIST = "state_list";
   static final CITY_LIST = "city_list";
+  static final FAQ = "faq";
+  static final TERMS = "terms";
+  static final PRIVACY = "privacy";
+
   static final SUBSCRIPTION_DATE = "subcription_date";
   static final SUBSCRIPTION_EXPIRY_DATE = "subcription_expiry_date";
   static final CRIF_DATA = "crif_data";
@@ -78,4 +82,13 @@ class Constants {
 
   static final CART_COUNT = "cart_count";
   static final NOTIFICATION_COUNT = "notification_count";
+
+  static final WEIGHT_1 = "500 gms";
+  static final WEIGHT_2 = "1 Kgs";
+
+  static final SKIN_1 = "With Skin";
+  static final SKIN_2 = "Skinless";
+
+  static final BONE_1 = "With Bone";
+  static final BONE_2 = "Boneless";
 }

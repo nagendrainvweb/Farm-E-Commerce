@@ -193,8 +193,13 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
           _orderId, paymentId, status, payingAmount);
       hideProgressDialogService();
 
-      onPaymentCallback((payResponse.status == Constants.SUCCESS),
-          payResponse.data, orderId, paymentId, payingAmount, retry: () {
+      onPaymentCallback(
+          (payResponse.status == Constants.SUCCESS),
+          payResponse.data.status.id,
+          payResponse.data.status.orderId,
+          paymentId,
+          payingAmount,
+          _appRepo, retry: () {
         updatePayment(orderId, paymentId, status, payingAmount);
       });
     } catch (e) {
@@ -208,7 +213,7 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
     //     msg: "ERROR: " + response.code.toString() + " - " + response.message,
     //     timeInSecForIos: 4);
     myPrint("ERROR: " + response.code.toString() + " - " + response.message);
-    _snackBarService.showSnackbar(message: response.message);
+   // _snackBarService.showSnackbar(message: response.message);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -249,7 +254,7 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
     notifyListeners();
   }
 
-  void payClicked(BuildContext context) async {
+  void payClicked(BuildContext context, {Function onCashOnDelivery}) async {
     print("hey i am called");
     // myPrint("hey i am called");
 
@@ -260,7 +265,9 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
           ? Utility.formattedServerDate(pickUpDate) + " " + timeSlot
           : "";
       final deliveryDateTime = (deliveryDate != null)
-          ? Utility.formattedServerDate(deliveryDate) + " " + deliveryTimeSlot.format(context)
+          ? Utility.formattedServerDate(deliveryDate) +
+              " " +
+              deliveryTimeSlot.format(context)
           : "";
       myPrint('pickup date $pickupDateTime');
       final response = await _apiService.placeOrder(
@@ -269,18 +276,27 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
           "",
           "",
           _discountAmount,
-        (_deliveryRadio == 1)?deliveryDateTime:  pickupDateTime,
+          (_deliveryRadio == 1) ? deliveryDateTime : pickupDateTime,
           "",
           "",
           _addressData.latitude,
           _addressData.longitude,
-          (deliveryRadio == 1) ? "dunzo" : "pickup");
+          (deliveryRadio == 1) ? "dunzo" : "pickup",
+          (_paymentMethodRadio == 1 ? "razorpay" : "cashondelivery"));
 
       hideProgressDialogService();
       if (response.status == Constants.SUCCESS) {
         _orderId = response.data["order_id"];
-        _startRazorPay(response.data["order_id"],
-            double.parse(response.data["amount"]).toInt());
+        if (_paymentMethodRadio == 1) {
+          _startRazorPay(response.data["order_id"],
+              double.parse(response.data["amount"]).toInt());
+        } else {
+          _updateCodOrder(
+            response.data["order_id"],
+            response.data["amount"]
+          );
+          // onCashOnDelivery(response.data);
+        }
       } else {
         _dialogService.showCustomDialog(
             variant: DialogType.error,
@@ -290,8 +306,31 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
       }
     } catch (e) {
       hideProgressDialogService();
+    }
+  }
+
+  _updateCodOrder(String orderId, String amount) async {
+    try {
+      showProgressDialogService("Please wait...");
+      final payResponse =
+          await _apiService.updatePaymentFree(orderId, amount, "");
+       onPaymentCallback(
+          (payResponse.status == Constants.SUCCESS),
+          payResponse.data.status.id,
+          payResponse.data.status.orderId,
+          "",
+          payingAmount,
+          _appRepo, retry: () {
+       _updateCodOrder(
+            orderId,
+          amount
+          );
+      });
+      
+    } catch (e) {
+      hideProgressDialogService();
       myPrint(e.toString());
-      _dialogService.showCustomDialog(
+            _dialogService.showCustomDialog(
           variant: DialogType.error,
           title: "Error",
           description: SOMETHING_WRONG_TEXT,
@@ -310,7 +349,7 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
       'name': 'Lotus farms',
       'description': '',
       //'order_id': '$orderId',
-      'timeout': 120, // in seconds
+      'timeout': 240, // in seconds
       'prefill': {
         'contact': '$number',
         'email': '$email',
@@ -346,6 +385,12 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
     couponController.text = "";
     _couponApplied = false;
     _couponText = "";
+    notifyListeners();
+  }
+
+  void resetResetDeliveryDateTime() {
+    _deliveryDate = null;
+    _deliveryTimeSlot = null;
     notifyListeners();
   }
 }

@@ -96,22 +96,23 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
                 AppNeumorpicTextFeild(
                   controller: model.cityController,
                   hintText: "City",
+                  enabled: false,
                   fillColor: AppColors.white,
                   textInputType: TextInputType.text,
                   onChanged: model.onChanged,
                   icon: Icons.pin_drop_outlined,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    _showBottonSheet(
-                        "Please Select State",
-                        appRepo.stateList.map((e) => e.name).toList(),
-                        model.stateController.text, (index) {
-                      model.stateController.text =
-                          appRepo.stateList[index].name;
-                      model.setStateId(appRepo.stateList[index].id);
-                    });
-                  },
+                  // onTap: () {
+                  //   _showBottonSheet(
+                  //       "Please Select State",
+                  //       appRepo.stateList.map((e) => e.name).toList(),
+                  //       model.stateController.text, (index) {
+                  //     model.stateController.text =
+                  //         appRepo.stateList[index].name;
+                  //     model.setStateId(appRepo.stateList[index].id);
+                  //   });
+                  // },
                   child: AppNeumorpicTextFeild(
                     controller: model.stateController,
                     hintText: "State",

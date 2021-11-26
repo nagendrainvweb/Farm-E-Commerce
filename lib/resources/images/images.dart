@@ -25,6 +25,9 @@ class ImageAsset {
 
 
   static const missing = _imagesPath + "missing.svg";
+  static const cat1 = _imagesPath + "cat1.jpg";
+  static const cat2 = _imagesPath + "cat2.jpg";
+  static const cat3 = _imagesPath + "cat3.jpg";
   static const address_missing = _imagesPath + "address_missing.svg";
   // static const sPay = _imagesPath + 's_pay.png';
   // static const unionPay = _imagesPath + 'union_pay.png';

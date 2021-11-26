@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/pages/account_page/account_page.dart';
 import 'package:lotus_farm/pages/address_page/address_page.dart';
 import 'package:lotus_farm/pages/order_page/order_page.dart';
+import 'package:lotus_farm/pages/product_review/product_review_page.dart';
 import 'package:lotus_farm/pages/profile/profile_view_model.dart';
 import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/resources/images/images.dart';
@@ -12,6 +14,7 @@ import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
 import 'package:lotus_farm/utils/dialog_helper.dart';
 import 'package:lotus_farm/utils/utility.dart';
+import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -91,51 +94,64 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       onModelReady: (model) {
         model.initData();
       },
-      builder: (_, model, child) => SingleChildScrollView(
-        child: DefaultTextStyle(
-          style: TextStyle(color: AppColors.blackGrey),
-          child: Column(
-            children: [
-              _getTopView(model),
-              SizedBox(height: 15),
-              ProfileTile(
-                title: "My Orders",
-                onTap: () {
-                  Utility.pushToNext(OrderPage(), context);
-                },
-              ),
-              ProfileTile(
-                title: "Address Book",
-                onTap: () {
-                  Utility.pushToNext(AddressPage(), context);
-                },
-              ),
-              ProfileTile(
-                title: "My Product Reviews",
-                onTap: () {},
-              ),
-              ProfileTile(
-                title: "Manage Sub Accounts",
-                onTap: () {},
-              ),
-              ProfileTile(
-                title: "Newsletter Subscription",
-                onTap: () {},
-              ),
-              ProfileTile(
-                title: "Support Center",
-                onTap: () {},
-              ),
-              ProfileTile(
-                title: "Logout",
-                onTap: () {
-                  DialogHelper.showLogoutDialog(context, () async {
-                    await Prefs.clear();
-                    Utility.pushToDashboard(context,2);
-                  });
-                },
-              ),
-            ],
+      builder: (_, model, child) => Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Profile",
+            style: TextStyle(color: AppColors.blackText),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: DefaultTextStyle(
+            style: TextStyle(color: AppColors.blackGrey),
+            child: Column(
+              children: [
+                _getTopView(model),
+                SizedBox(height: 15),
+                ProfileTile(
+                  title: "My Orders",
+                  onTap: () {
+                    Utility.pushToNext(OrderPage(), context);
+                  },
+                ),
+                ProfileTile(
+                  title: "Address Book",
+                  onTap: () {
+                    Utility.pushToNext(AddressPage(), context);
+                  },
+                ),
+                ProfileTile(
+                  title: "My Product Reviews",
+                  onTap: () {
+                    Utility.pushToNext(ProductReviewPage(), context);
+                  },
+                ),
+                // ProfileTile(
+                //   title: "Manage Sub Accounts",
+                //   onTap: () {},
+                // ),
+                // ProfileTile(
+                //   title: "Newsletter Subscription",
+                //   onTap: () {},
+                // ),
+                // ProfileTile(
+                //   title: "Support Center",
+                //   onTap: () {},
+                // ),
+                ProfileTile(
+                  title: "Logout",
+                  onTap: () {
+                    DialogHelper.showLogoutDialog(context, () async {
+                      await Prefs.clear();
+                      final repo = Provider.of<AppRepo>(context, listen: false);
+                      repo.setCartCount(0);
+                      repo.setLogin(false);
+                      Utility.pushToDashboard(context, 2);
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

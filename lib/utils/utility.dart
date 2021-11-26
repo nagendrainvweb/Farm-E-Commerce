@@ -79,6 +79,15 @@ class Utility {
           settings: RouteSettings(name: '${page.runtimeType}')),
     );
   }
+
+  static double getScreenWidth(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return size.width;
+  }
+    static double getScreenHeight(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return size.height;
+  }
   // static Future pushToDashboard(int position) async {
   //   final _navigationService = locator<NavigationService>();
   //   return await _navigationService.clearTillFirstAndShowView(HomePage(
@@ -144,5 +153,12 @@ class Utility {
   static DateTime parseDeviceDate(String dateTime) {
     // dateTime = dateTime.add(Duration(hours: 5,minutes: 30));
     return DateFormat('dd/MM/yyyy').parse(dateTime);
+  }
+
+  static void showCustomSnackBar(message, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      behavior: SnackBarBehavior.floating,
+    ));
   }
 }

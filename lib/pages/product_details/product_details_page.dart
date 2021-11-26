@@ -197,14 +197,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 : "Pre Order",
             onPressed: () {
               if (model.productDetailsData.isInStock) {
-                model.addToCart(
-                    model.productDetailsData.id,
-                    model.productDetailsData.sizes[0].id,
+                model.addToCart(model.productDetailsData.id, "",
                     model.productDetailsData.qty, onError: (String text) {
                   Utility.showSnackBar(context, text);
                 });
               } else {
-                myPrint("pre order");
+                Utility.pushToNext(ProductDetailsPage(productId: model.productDetailsData.preOrderId,), context);
               }
             },
           )
@@ -315,33 +313,31 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           actions: [
             Stack(
               children: [
-                // FloatingActionButton(
-                //   backgroundColor: Colors.white,
-                //   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                //   elevation: 2,
-                //     child: Icon(Icons.shopping_bag_outlined,color: AppColors.grey500,),
-                //     onPressed: () {
-                //       Utility.pushToNext(CartPage(), context);
-                //     }),
-                GestureDetector(
-                  onTap: () {
-                    Utility.pushToNext(CartPage(), context);
-                  },
-                  child: Neumorphic(
-                      style: NeumorphicStyle(
-                        shape: NeumorphicShape.concave,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                            BorderRadius.circular(12)),
-                        depth: 8,
-                        lightSource: LightSource.topLeft,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        child: Icon(
-                          Icons.shopping_bag_outlined,
-                          size: 18,
-                        ),
-                      )),
+                Visibility(
+                  visible: appRepo.login,
+                  child: GestureDetector(
+                    onTap: () {
+                      Utility.pushToNext(CartPage(), context);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.all(5),
+                      child: Neumorphic(
+                          style: NeumorphicStyle(
+                            shape: NeumorphicShape.concave,
+                            boxShape: NeumorphicBoxShape.roundRect(
+                                BorderRadius.circular(12)),
+                            depth: 8,
+                            lightSource: LightSource.topLeft,
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.shopping_bag_outlined,
+                              size: 18,
+                            ),
+                          )),
+                    ),
+                  ),
                 ),
                 Align(
                   alignment: Alignment.topCenter,
@@ -494,10 +490,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         SizedBox(height: 10),
                                         ChickenFeaturesWidget(
                                             data: model.productDetailsData),
-                                        CheckAvailabilityWidget(),
-                                        Descriptionwidget(
-                                          decs: model.productDetailsData.desc,
-                                        ),
+
+                                        ///  CheckAvailabilityWidget(),
+                                        // Descriptionwidget(
+                                        //   decs: model.productDetailsData.desc,
+                                        // ),
                                       ],
                                     ),
                                   ),
@@ -585,8 +582,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                                               .id,
                                                                     ),
                                                                     context);
-                                                              }else{
-                                                                 Utility.pushToNext(
+                                                              } else {
+                                                                Utility.pushToNext(
                                                                     ProductDetailsPage(
                                                                       heroTag:
                                                                           "pro$index",
@@ -644,9 +641,8 @@ class ProductTabWidget extends ViewModelWidget<ProductDetailsViewModel> {
 
   _getTabWidget(ProductDetailsViewModel model) {
     final List<Widget> widgetList = [
-      BenifitWidget(
-        benifitText: model.benifitText,
-        benifitImages: model.benifitImages,
+      Descriptionwidget(
+        decs: model.productDetailsData.desc,
       ),
       ReviewWidget(model.productDetailsData.reviewData.review),
     ];
@@ -663,7 +659,7 @@ class ProductTabWidget extends ViewModelWidget<ProductDetailsViewModel> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               CustomTab(
-                title: "Benifits",
+                title: "Description",
                 active: model.tabPosition == 0,
                 onTapClicked: () {
                   model.setTabPosition(0);
@@ -908,16 +904,17 @@ class Descriptionwidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: Spacing.defaultMargin),
+      padding: const EdgeInsets.symmetric(
+          vertical: Spacing.smallMargin, horizontal: Spacing.bigMargin),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Description",
-              style: TextStyle(
-                  color: AppColors.blackLight, fontWeight: FontWeight.bold)),
-          SizedBox(
-            height: 8,
-          ),
+          // Text("Description",
+          //     style: TextStyle(
+          //         color: AppColors.blackLight, fontWeight: FontWeight.bold)),
+          // SizedBox(
+          //   height: 8,
+          // ),
           Row(
             children: [
               Expanded(
@@ -1036,6 +1033,19 @@ class ChickenFeaturesWidget extends StatelessWidget {
               ))
             ],
           ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: FeatureTile(
+                  image: ImageAsset.delivery_chicken,
+                  title: "Delivery in: ${data.expectedDelivery}",
+                ),
+              )
+            ],
+          ),
         ],
       ),
     );
@@ -1066,9 +1076,11 @@ class FeatureTile extends StatelessWidget {
         //   size: 18,
         // ),
         SizedBox(width: 8),
-        Text(
-          title,
-          textScaleFactor: 0.8,
+        Expanded(
+          child: Text(
+            title,
+            textScaleFactor: 0.8,
+          ),
         )
       ],
     );

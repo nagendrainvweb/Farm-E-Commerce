@@ -35,13 +35,13 @@ abstract class BaseRequest {
   executeRequest() async {
     switch (method) {
       case HttpMethod.get:
-        return http.get(url, headers: headers);
+        return http.get(Uri.parse(url), headers: headers);
       case HttpMethod.post:
-        return http.post(url, headers: headers, body: body);
+        return http.post(Uri.parse(url), headers: headers, body: body);
       case HttpMethod.put:
-        return http.put(url, headers: headers, body: body);
+        return http.put(Uri.parse(url), headers: headers, body: body);
       case HttpMethod.delete:
-        return http.delete(url, headers: headers);
+        return http.delete(Uri.parse(url), headers: headers);
     }
   }
 

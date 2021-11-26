@@ -18,4 +18,5 @@ class AppColors {
   static const Color blackGrey = Color(0xff3c3c3c);
   static const Color green = Color(0xff57b70b);
   static const Color tileColor = Color(0xfff6f6f6);
+    static final Color backgroundColor = Color(0xfff4f8fb);
 }

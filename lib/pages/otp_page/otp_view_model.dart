@@ -59,22 +59,22 @@ class OtpViewModel extends BaseViewModel {
       myPrint(_random);
       await Future.delayed(Duration(seconds: 4));
       _isLoading = false;
-      _timer = 40;
+      _timer = 20;
       notifyListeners();
       setTimer();
       final response = await _apiService.sendOtp(_mobile, _random);
       if (response.status == Constants.SUCCESS) {
         _isLoading = false;
-        _timer = 13;
+      //  _timer = 13;
         notifyListeners();
-        setTimer();
+        //setTimer();
       } else {
-        _snackService.showSnackbar(
-            message: response.message,
-            mainButtonTitle: "RETRY",
-            onMainButtonTapped: () {
-              sendOtp();
-            });
+        // _snackService.showSnackbar(
+        //     message: response.message,
+        //     mainButtonTitle: "RETRY",
+        //     onMainButtonTapped: () {
+        //       sendOtp();
+        //     });
       }
     } on ApiErrorException catch (e) {
       _isLoading = false;
@@ -106,7 +106,7 @@ class OtpViewModel extends BaseViewModel {
   void verifyOtp() {
     final otp = otpController.text;
    // myPrint("entered otp is $otp");
-    if (otp == "123456" || otp == _random) {
+    if (otp == _random) {
       _navigationService.back(result: true);
     } else {
       _snackService.showSnackbar(

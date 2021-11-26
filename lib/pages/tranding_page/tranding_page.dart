@@ -3,7 +3,7 @@ import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app_widget/app_product_tile.dart';
 import 'package:lotus_farm/model/dashboard_data.dart';
 import 'package:lotus_farm/model/product_data.dart';
-import 'package:lotus_farm/pages/category_page/category_view_model.dart';
+import 'package:lotus_farm/pages/category_page/product_list_view_model.dart';
 import 'package:lotus_farm/pages/dashboard/dashboard_view_model.dart';
 import 'package:lotus_farm/pages/dashboard/dashboard_widget.dart';
 import 'package:lotus_farm/pages/product_details/product_details_page.dart';
@@ -25,8 +25,8 @@ class _TrendingPageState extends State<TrendingPage> {
   @override
   Widget build(BuildContext context) {
     final appRepo = Provider.of<AppRepo>(context);
-    return ViewModelBuilder<CategoryViewModel>.reactive(
-        viewModelBuilder: () => CategoryViewModel(),
+    return ViewModelBuilder<ProductListViewModel>.reactive(
+        viewModelBuilder: () => ProductListViewModel(),
         onModelReady: (model) {
           model.initTrending(appRepo, widget.list);
         },
@@ -40,7 +40,7 @@ class _TrendingPageState extends State<TrendingPage> {
             )));
   }
 
-  _getList(CategoryViewModel model) {
+  _getList(ProductListViewModel model) {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
@@ -68,6 +68,7 @@ class _TrendingPageState extends State<TrendingPage> {
                       context: context,
                       builder: (_) => AddToCartWidget(
                             amount: product.newPrice,
+                            cartQty: product.qty,
                             onAddToCartClicked: (int qty) {
                               Navigator.pop(context);
                               model.addToCart(product, qty,

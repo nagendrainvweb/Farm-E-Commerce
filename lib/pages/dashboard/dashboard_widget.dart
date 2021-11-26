@@ -5,6 +5,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app_widget/AppButton.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
+import 'package:lotus_farm/app_widget/AppNeumorphicContainerWidget.dart';
 import 'package:lotus_farm/app_widget/AppQtyAddRemoveWidget.dart';
 import 'package:lotus_farm/app_widget/app_amount.dart';
 import 'package:lotus_farm/app_widget/app_carousel.dart';
@@ -14,6 +15,7 @@ import 'package:lotus_farm/pages/category_page/pre_order_page.dart';
 import 'package:lotus_farm/pages/dashboard/dashboard_view_model.dart';
 import 'package:lotus_farm/pages/product_details/product_details_page.dart';
 import 'package:lotus_farm/pages/tranding_page/tranding_page.dart';
+import 'package:lotus_farm/resources/images/images.dart';
 import 'package:lotus_farm/resources/strings/app_strings.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
@@ -57,7 +59,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   _getSliderIndicator(DashboardViewModel model) {
     return (model.dashboardData.banner.length > 1)
         ? Container(
-            height: 40,
+            height: 30,
             color: Colors.transparent,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +97,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   _getSheduleOrder(DashboardViewModel model) {
     return InkWell(
       onTap: () {
-        Utility.pushToNext(PreOrderPage(), context);
+        Utility.pushToNext(
+            PreOrderPage(
+              title: "Pre Order",
+              categoryId: "",
+              isPreOrder: true,
+            ),
+            context);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -135,6 +143,18 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         bannerList: model.dashboardData.banner.map((e) => e.imageUrl).toList(),
         onPageChanged: (int index, reason) {
           model.pageChanged(index);
+        },
+        onBannerClicked: (int index) {
+          if (model.dashboardData.banner[index].categoryId.isNotEmpty) {
+            final categoryId = model.dashboardData.banner[index].categoryId;
+            Utility.pushToNext(
+                PreOrderPage(
+                  title: (categoryId == "44") ? "Pre Order" : "All Cuts",
+                  categoryId: model.dashboardData.banner[index].categoryId,
+                  isPreOrder: false,
+                ),
+                context);
+          }
         },
       ),
     );
@@ -217,6 +237,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                       context: context,
                       builder: (_) => AddToCartWidget(
                             amount: product.newPrice,
+                            cartQty: product.qty,
                             onAddToCartClicked: (int qty) {
                               Navigator.pop(context);
                               model.addToCart(product, qty,
@@ -298,6 +319,84 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     ))));
   }
 
+  _getCategoryView(BuildContext context, DashboardViewModel model) {
+    return Container(
+      height: 180,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: model.dashboardData.categories.length,
+          itemBuilder: (_, index) => Row(
+                children: [
+                  index == 0
+                      ? SizedBox(
+                          width: 4,
+                        )
+                      : Container(),
+                  InkWell(
+                    onTap: () {
+                      Utility.pushToNext(
+                          PreOrderPage(
+                            categoryId:
+                                model.dashboardData.categories[index].id,
+                            isPreOrder: false,
+                            title: model.dashboardData.categories[index].title,
+                          ),
+                          context);
+                    },
+                    child: AppNeumorphicContainer(
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.83,
+                            height: double.maxFinite,
+                            child: CachedNetworkImage(
+                              width: double.maxFinite,
+                              height: double.maxFinite,
+                              imageUrl: model
+                                  .dashboardData.categories[index].imageUrl,
+                              errorWidget: (_, value, text) {
+                                return Image.asset(
+                                  ImageAsset.noImage,
+                                  height: double.maxFinite,
+                                  width: double.maxFinite,
+                                  fit: BoxFit.contain,
+                                );
+                              },
+                              placeholder: (context, data) {
+                                return Container(
+                                  child: new Center(
+                                    child: SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: new CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+
+                          // Container(
+                          //     width: MediaQuery.of(context).size.width * 0.8,
+                          //   height: double.maxFinite,
+                          //   decoration:BoxDecoration(
+
+                          //     color: Colors.black26
+                          //   ),
+                          //   child:Center(child: Text("Curry Cut",style: TextStyle(color: AppColors.white), ),) ,
+                          // )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -343,20 +442,21 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                         //       spacing: 4.0),
                         // ),
                         // ),
-                        _getSheduleOrder(model),
+                        //  _getSheduleOrder(model),
+                        _getCategoryView(context, model),
                         _getListHeader(model),
                         _getList(model),
-                        _getHeader("Our Legacy"),
-                        _getLegacyText(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        BenifitWidget(
-                          benifitText: model.benifitText,
-                          benifitImages: model.benifitImages,
-                        ),
-                        _getHeader("Testimonials"),
-                        _getTestimonial(model.dashboardData.testimonials),
+                        // _getHeader("Our Legacy"),
+                        // _getLegacyText(),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        // BenifitWidget(
+                        //   benifitText: model.benifitText,
+                        //   benifitImages: model.benifitImages,
+                        // ),
+                        // _getHeader("Testimonials"),
+                        // _getTestimonial(model.dashboardData.testimonials),
                       ],
                     )),
                   ),
@@ -370,10 +470,12 @@ class AddToCartWidget extends StatefulWidget {
     Key key,
     this.onAddToCartClicked,
     this.amount,
+     this.cartQty = 0,
   }) : super(key: key);
 
   final Function onAddToCartClicked;
   final int amount;
+  final int cartQty;
 
   @override
   _AddToCartWidgetState createState() => _AddToCartWidgetState();
@@ -381,6 +483,14 @@ class AddToCartWidget extends StatefulWidget {
 
 class _AddToCartWidgetState extends State<AddToCartWidget> {
   int qty = 1;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    qty = widget.cartQty==0 ? 1:widget.cartQty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -407,7 +517,7 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
           ),
           Spacer(),
           AppQtyAddRemoveWidget(
-            qty: "$qty",
+            qty: "${qty}",
             iconLeftPadding: false,
             iconRightPadding: false,
             textScaleRefactor: 0.9,
@@ -433,7 +543,7 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
             text: "Add to Cart",
             textScaleFactor: 0.9,
             onPressed: () {
-              widget.onAddToCartClicked(qty);
+              widget.onAddToCartClicked(qty-widget.cartQty);
             },
           )
         ],

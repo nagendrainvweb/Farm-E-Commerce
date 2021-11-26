@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "537398323342",
+    "project_id": "lotus-farms-c7f20",
+    "storage_bucket": "lotus-farms-c7f20.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537398323342:android:cfd37640e1a7f48d66c1df",
+        "android_client_info": {
+          "package_name": "com.inventifweb.drmeat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "537398323342-o6l06h1f63duvqod2ujbv5o4fa4j1l96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOp6FtNXejEViMtcaMwsdFgdbctFyj-SY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "537398323342-o6l06h1f63duvqod2ujbv5o4fa4j1l96.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537398323342:android:ba63a1529078f4ae66c1df",
+        "android_client_info": {
+          "package_name": "com.inventifweb.lotusfarms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "537398323342-o6l06h1f63duvqod2ujbv5o4fa4j1l96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOp6FtNXejEViMtcaMwsdFgdbctFyj-SY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "537398323342-o6l06h1f63duvqod2ujbv5o4fa4j1l96.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

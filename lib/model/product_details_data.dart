@@ -239,17 +239,20 @@ class ReviewData {
     threeStarCount = json['three_star_count'];
     twoStarCount = json['two_star_count'];
     oneStarCount = json['one_star_count'];
-    if (json['my_review'] != null) {
-      my_review = json['my_review'].length > 0
-          ? new Review.fromJson(json['my_review'][0])
-          : null;
-    }
-    if (json['review'] != null) {
+        if (json['review'] != null) {
       review = new List<Review>();
       json['review'].forEach((v) {
         review.add(new Review.fromJson(v));
       });
     }
+    if (json['my_review'] != null) {
+      my_review = json['my_review'].length > 0
+          ? new Review.fromJson(json['my_review'][0])
+          : null;
+    }else{
+
+    }
+
   }
 
   Map<String, dynamic> toJson() {

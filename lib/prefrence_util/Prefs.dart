@@ -64,10 +64,8 @@ class Prefs {
   static Future setCity(String value) =>
       PreferencesHelper.setString(Constants.CITY, value);
 
-  static Future<String> get city =>
-      PreferencesHelper.getString(Constants.CITY);
+  static Future<String> get city => PreferencesHelper.getString(Constants.CITY);
 
-  
   static Future setStateList(String value) =>
       PreferencesHelper.setString(Constants.STATE_LIST, value);
 
@@ -79,6 +77,20 @@ class Prefs {
 
   static Future<String> get cityList =>
       PreferencesHelper.getString(Constants.CITY_LIST);
+  static Future setFaq(String value) =>
+      PreferencesHelper.setString(Constants.FAQ, value);
+
+  static Future<String> get faq => PreferencesHelper.getString(Constants.FAQ);
+  static Future setTerms(String value) =>
+      PreferencesHelper.setString(Constants.TERMS, value);
+
+  static Future<String> get terms =>
+      PreferencesHelper.getString(Constants.TERMS);
+  static Future setPrivacy(String value) =>
+      PreferencesHelper.setString(Constants.PRIVACY, value);
+
+  static Future<String> get privacy =>
+      PreferencesHelper.getString(Constants.PRIVACY);
 
   static void clear() async {
     Prefs.setLogin(false);
@@ -88,5 +100,6 @@ class Prefs {
     Prefs.setEmailId("");
     Prefs.setToken("");
     Prefs.setFcmToken("");
+    Prefs.setUserId("");
   }
 }

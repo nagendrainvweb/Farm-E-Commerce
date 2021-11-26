@@ -65,7 +65,7 @@ class AppProductTile extends StatelessWidget {
                         child: (product.images.length > 0)
                             ? CachedNetworkImage(
                                 width: double.maxFinite,
-                                height: 130,
+                                height: 140,
                                 imageUrl: product.images[0].imageUrl,
                                 placeholder: (context, data) {
                                   return Container(
@@ -84,7 +84,7 @@ class AppProductTile extends StatelessWidget {
                               )
                             : Image.asset(
                                 ImageAsset.noImage,
-                                height: 130,
+                                height: 140,
                                 width: double.maxFinite,
                                 fit: BoxFit.cover,
                               )),
@@ -92,7 +92,8 @@ class AppProductTile extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: Spacing.mediumMargin,
-                          vertical: Spacing.smallMargin),
+                          vertical: 5
+                          ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

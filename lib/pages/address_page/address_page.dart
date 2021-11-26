@@ -99,7 +99,22 @@ class _AddressPageState extends State<AddressPage> {
                                 itemBuilder: (_, index) => AddressTile(
                                       addressData: model.addressList[index],
                                       onTap: () {
-                                        _showActionSheet(index, model);
+                                        _showActionSheet(index, model,
+                                            () async {
+                                          Navigator.pop(context);
+                                          final value =
+                                              await Utility.pushToNext(
+                                                  AddEditAddressPage(
+                                                    address: model
+                                                        .addressList[index],
+                                                  ),
+                                                  context);
+                                          if (value != null) {
+                                            Utility.showSnackBar(
+                                                context, value);
+                                            _refreshkey.currentState.show();
+                                          }
+                                        });
                                       },
                                     )),
                           ),
@@ -109,7 +124,7 @@ class _AddressPageState extends State<AddressPage> {
     );
   }
 
-  _showActionSheet(int index, AddressViewModel model) {
+  _showActionSheet(int index, AddressViewModel model, Function onTileClick) {
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -122,18 +137,7 @@ class _AddressPageState extends State<AddressPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ListTile(
-                    onTap: () async {
-                      Navigator.pop(context);
-                      final value = await Utility.pushToNext(
-                          AddEditAddressPage(
-                            address: model.addressList[index],
-                          ),
-                          context);
-                      if (value != null) {
-                        Utility.showSnackBar(context, value);
-                        _refreshkey.currentState.show();
-                      }
-                    },
+                    onTap: onTileClick,
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -174,15 +178,18 @@ class AddressTile extends StatelessWidget {
     this.onTap,
     this.addressData,
     this.selected = false,
+    this.tileColor,
   }) : super(key: key);
 
   final Function onTap;
   final AddressData addressData;
   final bool selected;
+  final Color tileColor;
 
   @override
   Widget build(BuildContext context) {
     return AppNeumorphicContainer(
+      color: tileColor,
       radius: 8,
       child: InkWell(
         onTap: onTap,
@@ -203,11 +210,18 @@ class AddressTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${addressData.firstName} ${addressData.lastName}",
-                      style: TextStyle(
-                          color: AppColors.blackGrey,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold)),
+                  Row(
+                    children: [
+                      Text("${addressData.firstName} ${addressData.lastName}",
+                          style: TextStyle(
+                              color: AppColors.blackGrey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold)),
+                    Spacer(),
+
+                    Icon(Icons.edit_outlined,color: AppColors.grey700,)
+                    ],
+                  ),
                   SizedBox(
                     height: 8,
                   ),

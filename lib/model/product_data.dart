@@ -1,3 +1,4 @@
+import 'package:lotus_farm/model/product_details_data.dart';
 import 'package:lotus_farm/utils/utility.dart';
 
 class Product {
@@ -29,6 +30,7 @@ class Product {
   int amount;
   String size_id;
   int orderBy;
+  ReviewData reviewData;
 
   Product(
       {this.id,
@@ -58,6 +60,7 @@ class Product {
       this.images,
       this.size_id,
       this.orderBy,
+      this.reviewData,
       this.sizes});
 
   Product.fromJson(Map<String, dynamic> json, {int order}) {
@@ -73,8 +76,8 @@ class Product {
     isOffer = json['isOffer'];
     offer = json['offer'];
     isInStock = json['isInStock'];
-    oldPrice = json['old_price'];
-    newPrice = json['new_price'];
+    oldPrice =  double.parse(json['old_price'].toString()).toInt();
+    newPrice = double.parse(json['new_price'].toString()).toInt();
     discount = json['discount'];
     specialPrice = json['special_price'].toString();
     specialTodate = json['special_todate'].toString();
@@ -93,6 +96,9 @@ class Product {
         images.add(new Images.fromJson(v));
       });
     }
+    reviewData = json['items'] != null
+        ? new ReviewData.fromJson(json['items'])
+        : null;
     // if (json['sizes'] != null) {
     //   sizes = new List<Sizes>();
     //   json['sizes'].forEach((v) {

@@ -25,7 +25,8 @@ class AppNeumorpicTextFeild extends StatelessWidget {
       this.onChanged,
       this.validator,
       this.onSubmit,
-      this.errorText, this.icon})
+      this.errorText,
+      this.icon})
       : super(key: key);
 
   final Widget suffix;
@@ -78,6 +79,7 @@ class AppNeumorpicTextFeild extends StatelessWidget {
             Expanded(
                 child: TextField(
               controller: controller,
+              
               onChanged: onChanged,
               onSubmitted: onSubmit,
               keyboardType: textInputType,

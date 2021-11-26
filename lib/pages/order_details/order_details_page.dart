@@ -39,8 +39,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           ),
         ),
         body: Container(
-          margin: const EdgeInsets.symmetric(
-              horizontal: Spacing.defaultMargin, vertical: Spacing.smallMargin),
+        
           child: (model.loading)
               ? Center(
                   child: CircularProgressIndicator(),
@@ -116,6 +115,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           ),
           AddressTile(
             addressData: addressData,
+            tileColor: AppColors.white,
           ),
           // Container(
           //   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
@@ -168,8 +168,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     for (var product in data.product) {
       totalAmount = totalAmount + product.amount;
     }
-    var payAmount = double.parse(data.payment.paymentAmount);
-    var discountAmount = totalAmount - payAmount;
+    var payAmount = data.payment.paymentAmount != null? double.parse(data.payment.paymentAmount).toStringAsFixed(2):"0";
+    var discountAmount = totalAmount - double.parse(payAmount);
     return Container(
       color: Colors.white,
       child: Column(
@@ -203,6 +203,14 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   height: 8,
                 ),
                 _buildDetailsRow(
+                    'Payment Method',
+                    '${data.payment.paymentMethod}',
+                    Colors.grey.shade700,
+                    FontWeight.normal),
+                SizedBox(
+                  height: 14,
+                ),
+                _buildDetailsRow(
                     'Total Value',
                     '${AppStrings.rupee}$totalAmount',
                     Colors.grey.shade700,
@@ -220,7 +228,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 ),
                 _buildDetailsRow(
                     'Discount',
-                    '- ${AppStrings.rupee}${discountAmount.toStringAsFixed(2)}',
+                   (payAmount=="0")?"- 0" :'- ${AppStrings.rupee}${discountAmount.toStringAsFixed(2)}',
                     Colors.grey.shade700,
                     FontWeight.normal),
                 SizedBox(
@@ -233,8 +241,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 // ),
                 _buildDetailsRow(
                     'Amount paid',
-                    '${AppStrings.rupee}${payAmount.toStringAsFixed(2)}',
-                    Colors.red.shade400,
+                    '${AppStrings.rupee}${payAmount}',
+                    Colors.lightGreen,
                     FontWeight.w600),
                 SizedBox(
                   height: 14,
@@ -272,7 +280,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
   _getOrderDetails(OrderDetailsViewModel model) {
     OrderDetailsData data = model.orderData;
-    var payAmount = double.parse(data.payment.paymentAmount).toStringAsFixed(2);
+    var payAmount = data.payment.paymentAmount!=null?  double.parse(data.payment.paymentAmount).toStringAsFixed(2):"Pending";
     // var totalAmount = 0;
     // for (var product in data.product) {
     //   totalAmount = totalAmount + product.amount;
@@ -304,7 +312,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   '${AppStrings.rupee}${payAmount}',
                   style: TextStyle(
                       fontSize: 14,
-                      color: Colors.red.shade400,
+                      color: Colors.lightGreen,
                       fontWeight: FontWeight.w600),
                 )
               ],
@@ -491,7 +499,7 @@ class _TrackViewState extends State<TrackView> {
     return Center(
       child: Container(
         width: 2.5,
-        color: AppColors.redAccent,
+        color: AppColors.green,
       ),
     );
   }

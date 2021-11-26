@@ -36,80 +36,140 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
+  bool _bottomOpen = false;
   _getBottomAddCart(CheckOutViewModel model) {
     return Container(
-      decoration: BoxDecoration(color: AppColors.white, boxShadow: [
-        BoxShadow(
-          color: Colors.grey.shade400,
-          blurRadius: 6.0,
-        ),
-      ]),
-      padding: const EdgeInsets.symmetric(
-          horizontal: Spacing.defaultMargin, vertical: Spacing.mediumMargin),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Total Price"),
-              AppAmountWidget(
-                amount: model.totalAmount,
-              )
-            ],
+        decoration: BoxDecoration(color: AppColors.white, boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade400,
+            blurRadius: 6.0,
           ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Delivery fees"),
-              AppAmountWidget(
-                amount: "0",
-              )
-            ],
-          ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Discount"),
-              AppAmountWidget(
-                amount: "0",
-              )
-            ],
-          ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Paying Amount"),
-              AppAmountWidget(
-                amount: model.payingAmount,
-              )
-            ],
-          ),
-          SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AppButtonWidget(
-                text: "PAY",
-                width: MediaQuery.of(context).size.width * 0.6,
-                verticalPadding: Spacing.mediumMargin,
-                onPressed: () {
-                  myPrint("Pay clicked");
-                  model.payClicked(context);
-                  // _onPaymentCallback(
-                  //     false, null, "0114", "0182912883", "300.00", retry: () {
-                  //   myPrint("retry Clicked");
-                  // });
-                },
+        ]),
+        padding: const EdgeInsets.symmetric(
+            horizontal: Spacing.defaultMargin, vertical: Spacing.mediumMargin),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            (_bottomOpen)
+                ? Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Total Price"),
+                          AppAmountWidget(
+                            amount: model.totalAmount,
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Delivery fees"),
+                          AppAmountWidget(
+                            amount: "0",
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Discount"),
+                          AppAmountWidget(
+                            amount: "0",
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  )
+                : Container(),
+
+            // SizedBox(height: 8),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text("Paying Amount"),
+            //     AppAmountWidget(
+            //       amount: model.payingAmount,
+            //     )
+            //   ],
+            // ),
+
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _bottomOpen = !_bottomOpen;
+                });
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Paying Amount",
+                          style: TextStyle(
+                            color: AppColors.grey400,
+                          )),
+                      Row(
+                        children: [
+                          AppAmountWidget(
+                            amount: model.payingAmount,
+                          ),
+                          Icon(
+                            (_bottomOpen)
+                                ? Icons.expand_less_outlined
+                                : Icons.expand_more_outlined,
+                            size: 18,
+                            color: AppColors.grey600,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  Spacer(),
+                  AppButtonWidget(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    text: "Pay",
+                    onPressed: () {
+                      model.payClicked(context,
+                          onCashOnDelivery: (Map<String, dynamic> data) {
+                        _onPaymentCallback(
+                            true,
+                            data["order_id"],
+                            data["order_id_actual"],
+                            double.parse(data["amount"]).toStringAsFixed(2),
+                            double.parse(data["amount"]).toStringAsFixed(2),
+                            null);
+                      });
+                    },
+                  ),
+                ],
               ),
-            ],
-          )
-        ],
-      ),
-    );
+            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     AppButtonWidget(
+            //       text: "PAY",
+            //       width: MediaQuery.of(context).size.width * 0.6,
+            //       verticalPadding: Spacing.mediumMargin,
+            //       onPressed: () {
+            //         myPrint("Pay clicked");
+            //         model.payClicked(context);
+            //         // _onPaymentCallback(
+            //         //     false, null, "0114", "0182912883", "300.00", retry: () {
+            //         //   myPrint("retry Clicked");
+            //         // });
+            //       },
+            //     ),
+            //   ],
+            // )
+          ],
+        ));
   }
 
   _getDeliveryMethod(CheckOutViewModel model) {
@@ -191,7 +251,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                               fontSize: 12),
                                         ),
                                         onEditclicked: () {
-                                          _showAddressSheet(model, context);
+                                          _showAddressSheet(model, context,
+                                              () async {
+                                            Navigator.pop(context);
+                                            final value =
+                                                await Utility.pushToNext(
+                                                    AddEditAddressPage(),
+                                                    context);
+                                            if (value != null) {
+                                              model.fetchAddressList();
+                                            }
+                                          });
                                         },
                                       ),
                                       CheckOutOptionWidget(
@@ -210,14 +280,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                   child: Row(
                                                     children: [
                                                       Text(
-                                                        "Delivery with Danzo  ",
+                                                        "Free Delivery  ",
                                                         style: TextStyle(
                                                             color: AppColors
                                                                 .blackGrey,
                                                             fontSize: 14),
                                                       ),
                                                       Text(
-                                                        "(Free)",
+                                                        "",
                                                         style: TextStyle(
                                                             color:
                                                                 AppColors.green,
@@ -286,12 +356,58 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                       Visibility(
                                           visible: model.deliveryRadio == 1,
                                           child: CheckOutOptionWidget(
+                                              // final deliveryDate =
+                                              //     await showDatePicker(
+                                              //         context: context,
+                                              //         initialDate:
+                                              //             DateTime.now(),
+                                              //         firstDate:
+                                              //             DateTime.now(),
+                                              //         lastDate: DateTime(
+                                              //             DateTime.now().year,
+                                              //             DateTime.now()
+                                              //                 .month,
+                                              //             DateTime.now().day +
+                                              //                 7));
+                                              // //
+                                              // if (deliveryDate != null) {
+                                              //   model.setDeliveryDate(
+                                              //       deliveryDate);
+                                              //   final time = await _selectTime(
+                                              //       context,
+                                              //       model.deliveryTimeSlot);
+                                              //   model.setDeliveryTimeSlot(
+                                              //       time);
+                                              // }
                                               title:
                                                   "Select Delivery Date time (optional)",
-                                              showEdit: false,
-                                              onEditclicked: () {
-                                                // _showBottomStoreList(
-                                                //     context, model);
+                                              showEdit: true,
+                                              onEditclicked: () async {
+                                                model
+                                                    .resetResetDeliveryDateTime();
+                                                // final deliveryDate =
+                                                //     await showDatePicker(
+                                                //         context: context,
+                                                //         initialDate:
+                                                //             DateTime.now(),
+                                                //         firstDate:
+                                                //             DateTime.now(),
+                                                //         lastDate: DateTime(
+                                                //             DateTime.now().year,
+                                                //             DateTime.now()
+                                                //                 .month,
+                                                //             DateTime.now().day +
+                                                //                 7));
+                                                // //
+                                                // if (deliveryDate != null) {
+                                                //   model.setDeliveryDate(
+                                                //       deliveryDate);
+                                                //   final time = await _selectTime(
+                                                //       context,
+                                                //       model.deliveryTimeSlot);
+                                                //   model.setDeliveryTimeSlot(
+                                                //       time);
+                                                // }
                                               },
                                               child: Column(
                                                 children: [
@@ -320,6 +436,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                                 null) {
                                                               model.setDeliveryDate(
                                                                   deliveryDate);
+                                                              final time =
+                                                                  await _selectTime(
+                                                                      context,
+                                                                      model
+                                                                          .deliveryTimeSlot);
+                                                              model
+                                                                  .setDeliveryTimeSlot(
+                                                                      time);
                                                             }
                                                           },
                                                           child: Text(
@@ -368,14 +492,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                                               model.deliveryTimeSlot);
                                                                       model.setDeliveryTimeSlot(
                                                                           time);
-                                                                      // showTimeSlotSheet(
-                                                                      //     context,
-                                                                      //     model,
-                                                                      //     onTimeSelected:
-                                                                      //         (String value) {
-                                                                      //   model.setDeliveryTimeSlot(
-                                                                      //       value);
-                                                                      // });
                                                                     },
                                                                     child: Text(
                                                                         "Please Select Delivery Time"))
@@ -487,6 +603,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                                         null) {
                                                                       model.setPickUpDate(
                                                                           pickUpDate);
+                                                                      showTimeSlotSheet(
+                                                                          context,
+                                                                          model,
+                                                                          onTimeSelected:
+                                                                              (String value) {
+                                                                        model.setPickUpTime(
+                                                                            value);
+                                                                      });
                                                                     }
                                                                   },
                                                                   child: Text(
@@ -569,14 +693,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                   child: Row(
                                                     children: [
                                                       Text(
-                                                        "Net Banking/ Upi ",
+                                                        "Net Banking/ Upi/ Credit/ Debit Card ",
                                                         style: TextStyle(
                                                             color: AppColors
                                                                 .blackGrey,
                                                             fontSize: 12),
                                                       ),
                                                       Text(
-                                                        "(powered by Razarpay)",
+                                                        "",
                                                         style: TextStyle(
                                                             color:
                                                                 AppColors.green,
@@ -607,7 +731,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                         .onRadioValueChanged(2);
                                                   },
                                                   child: Text(
-                                                    "Cash on delivery",
+                                                    "Cash on Delivery",
                                                     style: TextStyle(
                                                         color:
                                                             AppColors.blackGrey,
@@ -779,10 +903,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   Future<TimeOfDay> _selectTime(
       BuildContext context, TimeOfDay deliveryTime) async {
-    
     final TimeOfDay picked_s = await showTimePicker(
         context: context,
-        initialTime: deliveryTime??TimeOfDay(hour: TimeOfDay.now().hour + 1, minute: TimeOfDay.now().minute+30),
+        initialTime: deliveryTime ??
+            TimeOfDay(
+                hour: TimeOfDay.now().hour + 1,
+                minute: TimeOfDay.now().minute + 30),
         builder: (BuildContext context, Widget child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
@@ -970,7 +1096,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
         });
   }
 
-  void _showAddressSheet(CheckOutViewModel model, BuildContext context) {
+  void _showAddressSheet(CheckOutViewModel model, BuildContext context,
+      Function onAddAdressClicked) {
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -1018,13 +1145,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           ),
                         )),
               ),
+              Container(
+                margin: const EdgeInsets.all(10),
+                child: AppButtonWidget(
+                  width: double.maxFinite,
+                  onPressed: onAddAdressClicked,
+                  text: "Add New Address",
+                ),
+              )
             ],
           );
         });
   }
 
-  _onPaymentCallback(bool isSucess, OrderDetailsData orderDetailsData,
-      String orderId, String paymentId, String payingAmount,
+  _onPaymentCallback(bool isSucess, String orderId, String orderIdActual,
+      String paymentId, String payingAmount, AppRepo appRepo,
       {Function retry}) async {
     final icon = (isSucess) ? Icons.check : Icons.info;
     final color = (isSucess) ? AppColors.green : AppColors.redAccent;
@@ -1032,57 +1167,71 @@ class _CheckoutPageState extends State<CheckoutPage> {
         ? "Order of ${AppStrings.rupee} ${payingAmount} has been done Successfully"
         : "Transaction of ${AppStrings.rupee} $payingAmount has been intrrupted by something!";
     final desc = (isSucess) ? AppColors.green : AppColors.redAccent;
+    if (isSucess) {
+      Provider.of<AppRepo>(context, listen: false).setCartCount(0);
+      // appRepo.setCartCount(0);
+    }
     showModalBottomSheet(
       context: context,
-      // isDismissible: false,
+      isDismissible: false,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16), topRight: Radius.circular(16))),
       builder: (context) => Container(
         padding: const EdgeInsets.symmetric(
             horizontal: Spacing.defaultMargin, vertical: Spacing.defaultMargin),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(icon, color: color, size: 80),
-            SizedBox(height: 20),
-            Text(title,
-                textAlign: TextAlign.center,
-                style: extraBigTextStyle.copyWith(
-                  fontFamily: "",
-                )),
-            SizedBox(height: 5),
-            Visibility(
-              visible: !isSucess,
-              child: Text(
-                "Please click retry button if money has been deducted from bank then contact to Lotus Farms online helpline number.",
-                textAlign: TextAlign.center,
-                style: smallTextStyle,
+        child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(icon, color: color, size: 80),
+              SizedBox(height: 20),
+              Text(title,
+                  textAlign: TextAlign.center,
+                  style: extraBigTextStyle.copyWith(
+                    fontFamily: "",
+                  )),
+              SizedBox(height: 5),
+              Visibility(
+                visible: !isSucess,
+                child: Text(
+                  "Please click retry button if money has been deducted from bank then contact to Lotus Farms online helpline number.",
+                  textAlign: TextAlign.center,
+                  style: smallTextStyle,
+                ),
               ),
-            ),
-            SizedBox(height: 25),
-            FlatButton(
-                onPressed: () async {
-                  if (isSucess) {
-                    await Utility.pushToNext(OrderDetailsPage(), context);
+              SizedBox(height: 25),
+              FlatButton(
+                  onPressed: () async {
+                    if (isSucess) {
+                      await Utility.pushToNext(
+                          OrderDetailsPage(
+                            orderId: orderId,
+                          ),
+                          context);
+                      Utility.pushToDashboard(context, 0);
+                    } else {
+                      Navigator.pop(context);
+                      retry();
+                    }
+                  },
+                  textColor: AppColors.white,
+                  color: AppColors.blackGrey,
+                  child: Text(
+                      (isSucess) ? "order id : #$orderIdActual" : "Retry")),
+              SizedBox(height: 10),
+              FlatButton(
+                  onPressed: () {
                     Utility.pushToDashboard(context, 0);
-                  } else {
-                    Navigator.pop(context);
-                    retry();
-                  }
-                },
-                textColor: AppColors.white,
-                color: AppColors.blackGrey,
-                child: Text((isSucess) ? "order id : #$orderId" : "Retry")),
-            SizedBox(height: 10),
-            FlatButton(
-                onPressed: () {
-                  Utility.pushToDashboard(context, 0);
-                },
-                textColor: color,
-                child: Text("Back to dashboard")),
-          ],
+                  },
+                  textColor: color,
+                  child: Text("Back to dashboard")),
+            ],
+          ),
         ),
       ),
     );

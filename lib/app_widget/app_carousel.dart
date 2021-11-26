@@ -9,8 +9,12 @@ import 'package:lotus_farm/utils/utility.dart';
 class AppCarousel extends StatefulWidget {
   bool autoScroll;
   List<String> bannerList;
-  AppCarousel(this.autoScroll, {@required this.bannerList, this.onPageChanged});
+  AppCarousel(this.autoScroll,
+      {@required this.bannerList,
+      this.onPageChanged,
+      @required this.onBannerClicked});
   final Function onPageChanged;
+  final Function onBannerClicked;
   @override
   _AppCarouselState createState() => _AppCarouselState();
 }
@@ -35,7 +39,7 @@ class _AppCarouselState extends State<AppCarousel> {
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width,
-            height: 220,
+            height: 200,
             child: CarouselSlider(
               options: CarouselOptions(
                   autoPlay: widget.autoScroll,
@@ -53,11 +57,7 @@ class _AppCarouselState extends State<AppCarousel> {
                 (position) {
                   return InkWell(
                     onTap: () async {
-                     // myPrint("banner is  ${ widget.bannerList[position]}");
-                      // final token = await Prefs.token;
-                      // final id  = await Prefs.id;
-                      // myPrint("$token +"  "+$id");
-                      //myPrint(imageList.length);
+                      widget.onBannerClicked(position);
                     },
                     child: Neumorphic(
                       margin: const EdgeInsets.symmetric(
@@ -83,6 +83,11 @@ class _AppCarouselState extends State<AppCarousel> {
                                 ),
                               ),
                             ),
+                          );
+                        },
+                        errorWidget: (_, data, value) {
+                          return Container(
+                            child: Text("Error"),
                           );
                         },
                         fit: BoxFit.cover,
