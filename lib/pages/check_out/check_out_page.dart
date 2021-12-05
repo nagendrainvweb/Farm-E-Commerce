@@ -22,7 +22,7 @@ import 'package:lotus_farm/style/spacing.dart';
 import 'package:lotus_farm/utils/constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:provider/provider.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+//import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:stacked/stacked.dart';
 
 class CheckoutPage extends StatefulWidget {

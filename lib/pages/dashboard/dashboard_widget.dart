@@ -30,6 +30,7 @@ class DashboardWidget extends StatefulWidget {
 }
 
 class _DashboardWidgetState extends State<DashboardWidget> {
+  final _refreshKey = GlobalKey<RefreshIndicatorState>();
   _getTopText() {
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -405,8 +406,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     final repo = Provider.of<AppRepo>(context, listen: false);
     return ViewModelBuilder<DashboardViewModel>.reactive(
       viewModelBuilder: () => DashboardViewModel(),
-      onModelReady: (model) {
-        model.init(repo);
+      onModelReady: (model) async {
+        await model.init(repo);
+        _refreshKey.currentState.show();
       },
       builder: (_, model, child) => (model.loading)
           ? Center(
@@ -420,6 +422,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   })
               : Container(
                   child: RefreshIndicator(
+                    key: _refreshKey,
                     onRefresh: () async {
                       return await model.fetchDashboardData(loading: false);
                     },
@@ -470,7 +473,7 @@ class AddToCartWidget extends StatefulWidget {
     Key key,
     this.onAddToCartClicked,
     this.amount,
-     this.cartQty = 0,
+    this.cartQty = 0,
   }) : super(key: key);
 
   final Function onAddToCartClicked;
@@ -488,7 +491,7 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    qty = widget.cartQty==0 ? 1:widget.cartQty;
+    qty = widget.cartQty == 0 ? 1 : widget.cartQty;
   }
 
   @override
@@ -543,7 +546,7 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
             text: "Add to Cart",
             textScaleFactor: 0.9,
             onPressed: () {
-              widget.onAddToCartClicked(qty-widget.cartQty);
+              widget.onAddToCartClicked(qty - widget.cartQty);
             },
           )
         ],

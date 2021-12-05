@@ -13,7 +13,8 @@ class AppStrings {
       "https://b.zmtcdn.com/data/pictures/chains/8/48188/5a2efc061852861b316275c4428e5007.jpg";
   static const rupee = "₹";
   static const testKey = "rzp_test_O7vNwRKX0rqUH2";
-  static const liveKey = "rzp_live_8L8V8KSkf9Af6x";
+  static const liveKey = "rzp_live_OR8W7yBddtwfFz";
+  static const secertKey = "UKDeC4G52dY4fwJfpMO9GBlj";
   static const launchScreen = 'Launch Screen';
   static const aed = "AED";
   static const paymentDetail = 'Payment Details';

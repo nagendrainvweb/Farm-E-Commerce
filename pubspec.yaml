@@ -44,17 +44,18 @@ dependencies:
   smooth_page_indicator: ^0.2.1
   flutter_icons: ^1.1.0
   flutter_svg: ^0.19.3
-  razorpay_flutter: ^1.2.2
+  #razorpay_flutter: ^1.2.7
   flutter_html:
-  geocoder: ^0.2.1
-  url_launcher: ^6.0.12
+  #geocoder: ^0.2.1
+  geocoding: ^2.0.1
+  url_launcher: ^6.0.17
   flutter_inappwebview: ^5.3.2
   smooth_star_rating: ^1.1.1
   #flutter_html: ^1.0.0
 
   # state provider
   provider: ^4.3.3
-  firebase_messaging: ^10.0.9
+  #firebase_messaging: ^11.2.0
 
   # state management
   stacked: ^1.6.1+1

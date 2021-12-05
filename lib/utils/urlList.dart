@@ -6,7 +6,7 @@ class UrlList {
 
   // Api for bikaji app details
   //static final BASE_URL = "https://bikaji.club/webservice/";
-  static final BASE_URL = "https://lotusfarms.in/webservice/";
+  static final BASE_URL = "https://drmeatshop.com/webservice/";
   static final SEND_OTP = BASE_URL + "sendotp.php";
   static final USER_LOGIN = BASE_URL + "login.php";
   static final USER_REGISTRATION = BASE_URL + "registration.php";

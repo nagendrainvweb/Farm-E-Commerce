@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/model/address_data.dart';
@@ -16,7 +15,7 @@ import '../../app/app_helper.dart';
 import '../../app/locator.dart';
 import '../../utils/constants.dart';
 import 'package:lotus_farm/utils/utility.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+//import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -33,7 +32,7 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
   final _snackBarService = locator<SnackbarService>();
   final _dialogService = locator<DialogService>();
   String _orderId;
-  Razorpay _razorpay;
+ // Razorpay _razorpay;
 
   final couponController = TextEditingController();
 
@@ -79,7 +78,7 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
 
   @override
   void dispose() {
-    _razorpay.clear(); // Removes all listeners
+   // _razorpay.clear(); // Removes all listeners
     super.dispose();
   }
 
@@ -154,10 +153,10 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
     }
 
     // razorpay event handler
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    // _razorpay = Razorpay();
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   fetchStoreList() async {
@@ -177,13 +176,13 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
     notifyListeners();
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    // Fluttertoast.showToast(
-    //     msg: "SUCCESS: " + response.paymentId, timeInSecForIos: 4);
-    //myPrint("SUCCESS: " + response.paymentId);
-    updatePayment(
-        _orderId, response.paymentId, Constants.SUCCESS, _payingAmount);
-  }
+  // void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+  //   // Fluttertoast.showToast(
+  //   //     msg: "SUCCESS: " + response.paymentId, timeInSecForIos: 4);
+  //   //myPrint("SUCCESS: " + response.paymentId);
+  //   updatePayment(
+  //       _orderId, response.paymentId, Constants.SUCCESS, _payingAmount);
+  // }
 
   updatePayment(String orderId, String paymentId, String status,
       String payingAmount) async {
@@ -208,19 +207,19 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
     }
   }
 
-  void _handlePaymentError(PaymentFailureResponse response) {
-    // Fluttertoast.showToast(
-    //     msg: "ERROR: " + response.code.toString() + " - " + response.message,
-    //     timeInSecForIos: 4);
-    myPrint("ERROR: " + response.code.toString() + " - " + response.message);
-   // _snackBarService.showSnackbar(message: response.message);
-  }
+  // void _handlePaymentError(PaymentFailureResponse response) {
+  //   // Fluttertoast.showToast(
+  //   //     msg: "ERROR: " + response.code.toString() + " - " + response.message,
+  //   //     timeInSecForIos: 4);
+  //   myPrint("ERROR: " + response.code.toString() + " - " + response.message);
+  //  // _snackBarService.showSnackbar(message: response.message);
+  // }
 
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    // Fluttertoast.showToast(
-    //     msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIos: 4);
-    myPrint("EXTERNAL_WALLET: " + response.walletName);
-  }
+  // void _handleExternalWallet(ExternalWalletResponse response) {
+  //   // Fluttertoast.showToast(
+  //   //     msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIos: 4);
+  //   myPrint("EXTERNAL_WALLET: " + response.walletName);
+  // }
 
   void setStoreData(StoreData data) {
     _pickUpDate = null;
@@ -344,9 +343,9 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
     final number = await Prefs.mobileNumber;
     final email = await Prefs.emailId;
     var options = {
-      'key': AppStrings.testKey,
+      'key': AppStrings.liveKey,
       'amount': int.parse(_payingAmount) * 100,
-      'name': 'Lotus farms',
+      'name': 'Dr Meat',
       'description': '',
       //'order_id': '$orderId',
       'timeout': 240, // in seconds
@@ -356,7 +355,7 @@ class CheckOutViewModel extends BaseViewModel with AppHelper {
         'name': '$name $last_name'
       }
     };
-    _razorpay.open(options);
+    //_razorpay.open(options);
   }
 
   void applyCoupon() async {

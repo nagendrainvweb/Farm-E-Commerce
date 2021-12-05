@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geocoder/geocoder.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:lotus_farm/app/app_helper.dart';
 import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/app_regex/appRegex.dart';
@@ -140,9 +140,9 @@ class AddEditAddressViewModel extends BaseViewModel with AppHelper {
           " - " +
           pincode;
       myPrint("addres is $query");
-      var addresses = await Geocoder.local.findAddressesFromQuery(query);
-      var first = addresses.first;
-      print("${first.featureName} : ${first.coordinates}");
+      final addresses = await locationFromAddress(query);
+      //var first = addresses.first;
+      //print("${} : ${first}");
       final AddressData data = AddressData();
       data.addressId = addressId;
       data.firstName = firstName;
@@ -156,8 +156,8 @@ class AddEditAddressViewModel extends BaseViewModel with AppHelper {
       data.state = state;
       data.type = "";
       data.isDefault = true;
-      data.latitude = first.coordinates.latitude.toString();
-      data.longitude = first.coordinates.longitude.toString();
+      data.latitude = addresses[0].latitude.toString();
+      data.longitude = addresses[0].longitude.toString();
 
       final response = await _apiService.addUpdateAddress(data);
       hideProgressDialogService();
