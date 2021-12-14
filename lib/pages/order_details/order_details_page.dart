@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
 import 'package:lotus_farm/model/address_data.dart';
@@ -33,6 +34,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
       },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           title: Text(
             "Order Id #${widget.orderId}",
             style: TextStyle(color: AppColors.blackGrey),

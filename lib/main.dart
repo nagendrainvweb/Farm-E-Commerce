@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:stacked_services/stacked_services.dart';
+//import 'firebase_options.dart';
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -21,11 +22,13 @@ import 'package:stacked_services/stacked_services.dart';
 // }
 
 void main() async {
- WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp();
-  
+  //  await Firebase.initializeApp(
+  //   //options: DefaultFirebaseOptions.currentPlatform,
+  // );
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Set the background messaging handler early on, as a named top-level function
- // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   setUpLocator();
   setupDialogUi();
 
@@ -54,7 +57,7 @@ class MyApp extends StatelessWidget {
         title: 'Dr Meat',
         navigatorKey: StackedService.navigatorKey,
         themeMode: ThemeMode.light,
-        
+
         //  theme: NeumorphicThemeData(
         //   baseColor: Color(0xFFFFFFFF),
         //   lightSource: LightSource.topLeft,
@@ -78,13 +81,11 @@ class MyApp extends StatelessWidget {
             appBarTheme: AppBarTheme(
                 elevation: 0,
                 backgroundColor: Colors.transparent,
-                brightness: Brightness.light,
+                brightness: Brightness.dark,
                 //titleTextStyle: TextStyle(color:AppColors.blackGrey),
                 iconTheme: IconThemeData(color: AppColors.blackGrey))),
         home: (repo.introDone) ? HomePage() : IntroPage(),
       ),
     );
   }
-
-  
 }

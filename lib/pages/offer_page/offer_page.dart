@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
 import 'package:lotus_farm/model/offerResponse.dart';
 import 'package:lotus_farm/pages/offer_page/offer_view_model.dart';
@@ -22,6 +23,7 @@ class _OfferPageState extends State<OfferPage> {
       },
       builder: (_, model, child) => Scaffold(
           appBar: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle.dark,
             title: Text(
               "Offers",
               style: TextStyle(color: AppColors.blackGrey),

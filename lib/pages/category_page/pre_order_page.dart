@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app_widget/AppButton.dart';
@@ -58,6 +59,7 @@ class _PreOrderPageState extends State<PreOrderPage> {
     return Scaffold(
       //backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: Text(
           widget.title,
           style: TextStyle(color: AppColors.blackGrey),

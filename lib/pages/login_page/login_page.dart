@@ -27,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(),
         extendBodyBehindAppBar: true,
+        
         body: Container(
           padding: const EdgeInsets.symmetric(
               horizontal: Spacing.bigMargin, ),

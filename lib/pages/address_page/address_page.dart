@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
 import 'package:lotus_farm/app_widget/AppNeumorphicContainerWidget.dart';
@@ -30,6 +31,7 @@ class _AddressPageState extends State<AddressPage> {
       },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           title:
               Text("Addresses", style: TextStyle(color: AppColors.blackGrey)),
         ),

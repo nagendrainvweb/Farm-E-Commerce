@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lotus_farm/app/appRepository.dart';
@@ -194,6 +195,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           title: Text(
             "Checkout",
             style: TextStyle(color: AppColors.blackGrey),

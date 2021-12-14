@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/utils/utility.dart';
@@ -18,6 +19,7 @@ class _TermsPolicyPageState extends State<TermsPolicyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: Text(
           widget.title,
           style: TextStyle(color: AppColors.blackGrey),

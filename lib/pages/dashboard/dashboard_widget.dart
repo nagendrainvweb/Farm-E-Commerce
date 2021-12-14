@@ -408,7 +408,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       viewModelBuilder: () => DashboardViewModel(),
       onModelReady: (model) async {
         await model.init(repo);
-        _refreshKey.currentState.show();
+        _refreshKey?.currentState?.show();
       },
       builder: (_, model, child) => (model.loading)
           ? Center(

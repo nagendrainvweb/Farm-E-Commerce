@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -310,6 +311,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           actions: [
             Stack(
               children: [

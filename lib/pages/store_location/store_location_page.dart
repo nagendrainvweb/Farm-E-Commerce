@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/pages/address_page/address_page.dart';
 import 'package:lotus_farm/style/app_colors.dart';
@@ -16,6 +17,7 @@ class _StoreLocationPageState extends State<StoreLocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: Text(
           "Store Location",
           style: TextStyle(color: AppColors.blackGrey),

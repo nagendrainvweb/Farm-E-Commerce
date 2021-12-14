@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app_widget/AppButton.dart';
 import 'package:lotus_farm/app_widget/app_neumorpic_text_feild.dart';
@@ -31,6 +32,7 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
       builder: (_, model, child) => Scaffold(
         //  extendBodyBehindAppBar: true,
        appBar: AppBar(
+         systemOverlayStyle: SystemUiOverlayStyle.dark,
           title: Text((widget.address==null)? "Add Address":"Edit Address",style:TextStyle(color: AppColors.blackGrey)),
         ),
         body: Container(

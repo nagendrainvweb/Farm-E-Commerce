@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:lotus_farm/model/search_data.dart';
 import 'package:lotus_farm/pages/product_details/product_details_page.dart';
@@ -23,6 +24,7 @@ class _SearchPageState extends State<SearchPage> {
       builder: (context, model, child) => Scaffold(
         // backgroundColor: Colors.transparent,
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           // elevation: 0,
           centerTitle: false,
           backgroundColor: Colors.white,

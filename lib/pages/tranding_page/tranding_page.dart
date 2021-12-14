@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app_widget/app_product_tile.dart';
 import 'package:lotus_farm/model/dashboard_data.dart';
@@ -32,6 +33,7 @@ class _TrendingPageState extends State<TrendingPage> {
         },
         builder: (_, model, child) => Scaffold(
             appBar: AppBar(
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
               title: Text("Trending",
                   style: TextStyle(color: AppColors.blackGrey)),
             ),

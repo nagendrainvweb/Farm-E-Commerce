@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
 import 'package:lotus_farm/pages/order_details/order_details_page.dart';
 import 'package:lotus_farm/pages/order_page/order_view_model.dart';
@@ -23,6 +24,7 @@ class _OrderPageState extends State<OrderPage> {
       },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           title: Text(
             "My Orders",
             style: TextStyle(color: AppColors.blackGrey),

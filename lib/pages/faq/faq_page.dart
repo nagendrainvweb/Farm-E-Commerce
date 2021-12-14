@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lotus_farm/app_widget/AppNeumorphicContainerWidget.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 
@@ -14,6 +15,7 @@ class _FaqPageState extends State<FaqPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: Text(
           "FAQ",
           style: TextStyle(color: AppColors.blackGrey),

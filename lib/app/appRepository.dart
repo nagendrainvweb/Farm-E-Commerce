@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/model/dashboard_data.dart';
@@ -285,7 +285,7 @@ class AppRepo extends ChangeNotifier {
       _introDone = await Prefs.introDone;
       _isLogin = await Prefs.login;
       myPrint("intro done is $_introDone");
-       FirebaseMessaging.instance.getToken().then((value) => Prefs.setFcmToken(value));
+      // FirebaseMessaging.instance.getToken().then((value) => Prefs.setFcmToken(value));
 
       if (_isLogin) {
         fetchProfileDetails();

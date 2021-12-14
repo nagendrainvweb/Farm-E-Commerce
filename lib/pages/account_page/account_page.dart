@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lotus_farm/app_widget/AppButton.dart';
@@ -84,6 +85,7 @@ class _AccountPageState extends State<AccountPage> {
       },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           title: Text(
             "Account",
             style: TextStyle(color: AppColors.blackGrey),

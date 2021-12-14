@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
 import 'package:lotus_farm/pages/notification/notification_view_model.dart';
 import 'package:lotus_farm/style/app_colors.dart';
@@ -32,6 +33,7 @@ class _NotificationPageState extends State<NotificationPage> {
       },
       builder: (_, model, child) => Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           title: Text(
             "Notification",
             style: TextStyle(color: AppColors.blackGrey),

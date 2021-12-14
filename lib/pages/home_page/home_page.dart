@@ -1,7 +1,9 @@
 import 'dart:io';
 
 //import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lotus_farm/app/appRepository.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
@@ -132,6 +134,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(color: AppColors.blackGrey),
             ),
             elevation: 0,
+            systemOverlayStyle: SystemUiOverlayStyle.dark,
             backgroundColor: Colors.transparent,
             leading: Container(
               // decoration: BoxDecoration(
