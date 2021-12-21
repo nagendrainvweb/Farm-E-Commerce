@@ -1,6 +1,6 @@
 import 'dart:io';
 
-//import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,73 +38,73 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    //_performNotification();
+    _performNotification();
   }
 
-  // _performNotification() {
-  //   FirebaseMessaging.instance.getToken().then((value) => Prefs.setFcmToken(value));
+  _performNotification() {
+    FirebaseMessaging.instance.getToken().then((value) => Prefs.setFcmToken(value));
 
-  //   FirebaseMessaging.instance
-  //       .getInitialMessage()
-  //       .then((RemoteMessage message) {
-  //     print("FirebaseMessaging.instance.getInitialMessage() called");
-  //     if (message != null) {
-  //       Utility.pushToNext(NotificationPage(), context);
-  //     }
-  //   });
-  //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-  //     print('A new onMessageOpenedApp event was published!');
-  //     Utility.pushToNext(NotificationPage(), context);
-  //   });
-  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //     print("FirebaseMessaging.onMessage.listen called");
-  //     RemoteNotification notification = message.notification;
-  //     AndroidNotification android = message.notification?.android;
-  //     if (notification != null && android != null) {
-  //       // flutterLocalNotificationsPlugin.show(
-  //       //     notification.hashCode,
-  //       //     notification.title,
-  //       //     notification.body,
-  //       //     NotificationDetails(
-  //       //       android: AndroidNotificationDetails(
-  //       //         channel.id,
-  //       //         channel.name,
-  //       //         channel.description,
-  //       //         // TODO add a proper drawable resource to android, for now using
-  //       //         //      one that already exists in example app.
-  //       //         icon: 'launch_background',
-  //       //       ),
-  //       //     ));
-  //     }
-  //   });
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage message) {
+      print("FirebaseMessaging.instance.getInitialMessage() called");
+      if (message != null) {
+        Utility.pushToNext(NotificationPage(), context);
+      }
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      Utility.pushToNext(NotificationPage(), context);
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("FirebaseMessaging.onMessage.listen called");
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        // flutterLocalNotificationsPlugin.show(
+        //     notification.hashCode,
+        //     notification.title,
+        //     notification.body,
+        //     NotificationDetails(
+        //       android: AndroidNotificationDetails(
+        //         channel.id,
+        //         channel.name,
+        //         channel.description,
+        //         // TODO add a proper drawable resource to android, for now using
+        //         //      one that already exists in example app.
+        //         icon: 'launch_background',
+        //       ),
+        //     ));
+      }
+    });
 
-  //   if (Platform.isIOS) {
-  //     askNotificationPermission();
-  //   }
-  // }
+    if (Platform.isIOS) {
+      askNotificationPermission();
+    }
+  }
 
-  // askNotificationPermission() async {
-  //   FirebaseMessaging messaging = FirebaseMessaging.instance;
+  askNotificationPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  //   NotificationSettings settings = await messaging.requestPermission(
-  //     alert: true,
-  //     announcement: false,
-  //     badge: true,
-  //     carPlay: false,
-  //     criticalAlert: false,
-  //     provisional: false,
-  //     sound: true,
-  //   );
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
 
-  //   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-  //     print('User granted permission');
-  //   } else if (settings.authorizationStatus ==
-  //       AuthorizationStatus.provisional) {
-  //     print('User granted provisional permission');
-  //   } else {
-  //     print('User declined or has not accepted permission');
-  //   }
-  // }
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

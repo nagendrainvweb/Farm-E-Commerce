@@ -42,10 +42,10 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                   //  color: AppColors.redAccent,
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(ImageAsset.logo_small_png,
+                    child: Image.asset(ImageAsset.logo,
                     fit: BoxFit.contain,
-                     height: 230,
-                    // width: 50,
+                     height: 270,
+                    // width: 100,
                     ),
                   ),
                   //SizedBox(height: 50),

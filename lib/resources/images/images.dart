@@ -9,7 +9,8 @@ class ImageAsset {
   static const hanad_shake = _imagesPath + 'hanad_shake.svg';
   static const hand_leaf = _imagesPath + 'hand_leaf.svg';
   static const leaf = _imagesPath + 'leaf.svg';
-  static const logo = _imagesPath + 'logo.svg';
+  static const logo = _imagesPath + 'logo.png';
+  //static const logo
   static const offer = _imagesPath + 'offer.svg';
   static const quality = _imagesPath + 'quality.svg';
   static const question = _imagesPath + 'question.svg';

@@ -44,7 +44,7 @@ dependencies:
   smooth_page_indicator: ^0.2.1
   flutter_icons: ^1.1.0
   flutter_svg: ^0.19.3
-  #razorpay_flutter: ^1.2.7
+  razorpay_flutter: ^1.2.7
   flutter_html:
   #geocoder: ^0.2.1
   geocoding: ^2.0.1
@@ -55,7 +55,7 @@ dependencies:
 
   # state provider
   provider: ^4.3.3
-  firebase_messaging: ^11.2.0
+  firebase_messaging: ^11.2.4
 
   # state management
   stacked: ^1.6.1+1
@@ -98,6 +98,7 @@ flutter:
     - assets/images/hand_leaf.svg
     - assets/images/leaf.svg
     - assets/images/logo.svg
+    - assets/images/logo.png
     - assets/images/offer.svg
     - assets/images/quality.svg
     - assets/images/question.svg

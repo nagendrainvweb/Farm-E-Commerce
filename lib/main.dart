@@ -1,4 +1,4 @@
-//import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:lotus_farm/app/appRepository.dart';
@@ -10,25 +10,26 @@ import 'package:lotus_farm/prefrence_util/Prefs.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:stacked_services/stacked_services.dart';
 //import 'firebase_options.dart';
 
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   // If you're going to use other Firebase services in the background, such as Firestore,
-//   // make sure you call `initializeApp` before using other Firebase services.
-//   await Firebase.initializeApp();
-//   print('Handling a background message ${message.messageId}');
-// }
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
 
 void main() async {
-  //  await Firebase.initializeApp(
-  //   //options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  WidgetsFlutterBinding.ensureInitialized();
+   WidgetsFlutterBinding.ensureInitialized();
+   await Firebase.initializeApp(
+    //options: DefaultFirebaseOptions.currentPlatform,
+  );
+ 
 
   // Set the background messaging handler early on, as a named top-level function
-  //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   setUpLocator();
   setupDialogUi();
 
