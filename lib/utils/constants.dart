@@ -75,8 +75,8 @@ class Constants {
 
   static final URL_DEVICE = "device";
 
-  static final ANDROID_VERSION = "1";
-  static final IOS_VERSION = "1";
+  static final ANDROID_VERSION = "2";
+  static final IOS_VERSION = "2";
   static final ANDROID_DEVICE = "android";
   static final IOS_DEVICE = "ios";
 

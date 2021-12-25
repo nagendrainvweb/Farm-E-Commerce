@@ -7,7 +7,7 @@ PODS:
   - firebase_core (1.10.5):
     - Firebase/CoreOnly (= 8.9.0)
     - Flutter
-  - firebase_messaging (11.2.3):
+  - firebase_messaging (11.2.4):
     - Firebase/Messaging (= 8.9.0)
     - firebase_core
     - Flutter
@@ -81,6 +81,10 @@ PODS:
   - path_provider (0.0.1):
     - Flutter
   - PromisesObjC (2.0.0)
+  - razorpay-pod (1.1.17)
+  - razorpay_flutter (1.1.10):
+    - Flutter
+    - razorpay-pod
   - shared_preferences (0.0.1):
     - Flutter
   - sqflite (0.0.2):
@@ -98,6 +102,7 @@ DEPENDENCIES:
   - geocoding (from `.symlinks/plugins/geocoding/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - razorpay_flutter (from `.symlinks/plugins/razorpay_flutter/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
@@ -115,6 +120,7 @@ SPEC REPOS:
     - nanopb
     - OrderedSet
     - PromisesObjC
+    - razorpay-pod
 
 EXTERNAL SOURCES:
   firebase_core:
@@ -133,6 +139,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
+  razorpay_flutter:
+    :path: ".symlinks/plugins/razorpay_flutter/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sqflite:
@@ -143,7 +151,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Firebase: 13d8d96499e2635428d5bf0ec675df21f95d9a95
   firebase_core: dfcae4c150a5e24436a0b7677c470478a234d5bf
-  firebase_messaging: c4696ded2f44fb5c2bf6e94f9a575105793e58fa
+  firebase_messaging: dff5cd08781ee1de988565a83c977e435405cd7e
   FirebaseCore: 599ee609343eaf4941bd188f85e3aa077ffe325b
   FirebaseCoreDiagnostics: 56fb7216d87e0e6ec2feddefa9d8a392fe8b2c18
   FirebaseInstallations: 830327b45345ffc859eaa9c17bcd5ae893fd5425
@@ -160,6 +168,8 @@ SPEC CHECKSUMS:
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
+  razorpay-pod: 570fa697c5c0d8e356f42d783bf37d9361334062
+  razorpay_flutter: 84b3bfd206ae9c9c2a9ba585524a1b3d8102b6c1
   shared_preferences: 5033afbb22d372e15aff8ff766df9021b845f273
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   url_launcher_ios: 02f1989d4e14e998335b02b67a7590fa34f971af
