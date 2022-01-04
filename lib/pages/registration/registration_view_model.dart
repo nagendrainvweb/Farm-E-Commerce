@@ -52,6 +52,8 @@ class RegistrationViewModel extends BaseViewModel with AppHelper {
   }
 
   void _setData(User data) async {
+    final date = Utility.formattedDeviceDate(DateTime.now());
+    Prefs.setLoginDate(date);
     Prefs.setUserId(data.id);
     Prefs.setName(data.firstName);
     Prefs.setSurName(data.lastName);

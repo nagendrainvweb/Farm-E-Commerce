@@ -266,6 +266,7 @@ class ApiService extends BaseRequest {
     try {
       final request = await http.post(Uri.parse(UrlList.FETCH_OFFERS),
           body: postJson, headers: await _getHeader());
+      print("offer response is " + request.body.toString());
       final response = json.decode(request.body);
       var data = response[UrlConstants.DATA];
       //Prefs.setOfferResponse(request.body);
@@ -763,15 +764,18 @@ class ApiService extends BaseRequest {
 
   Future<BasicResponse<List<NotificationData>>> fetchNotification() async {
     final userId = await Prefs.userId;
+    final date  = await Prefs.loginDate;
     final common = _getCommonFeild();
     final postJson = {
       "user_id": '$userId',
+      "date":'$date'
     };
     postJson.addAll(common);
     myPrint(postJson.toString());
     try {
-      final request = await http.post(Uri.parse(UrlList.STORE_LIST),
+      final request = await http.post(Uri.parse(UrlList.FETCH_NOTIFICATIONS),
           headers: await _getHeader(), body: postJson);
+      print("noti response " + request.body.toString());
       final jsonResponse = json.decode(request.body);
       final basicResponse =
           BasicResponse<List<NotificationData>>.fromJson(json: jsonResponse);

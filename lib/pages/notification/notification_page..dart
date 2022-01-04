@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
+import 'package:lotus_farm/app_widget/app_empty_widget.dart';
 import 'package:lotus_farm/pages/notification/notification_view_model.dart';
 import 'package:lotus_farm/style/app_colors.dart';
 import 'package:lotus_farm/style/spacing.dart';
+import 'package:lotus_farm/utils/custom_error_widget.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
 
@@ -49,6 +51,8 @@ class _NotificationPageState extends State<NotificationPage> {
                     onRetryCliked: () {
                       model.fetchNotifications();
                     })
+                :(model.notificationList.isEmpty)?
+                CustomEmptyWidget(text: "You do not have notifications right now,\nPlease continue order with Dr Meat.", )
                 : Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: Spacing.mediumMargin,

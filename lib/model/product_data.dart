@@ -29,6 +29,7 @@ class Product {
   List<Sizes> sizes;
   int amount;
   String size_id;
+  String swatch_img_url;
   int orderBy;
   ReviewData reviewData;
 
@@ -48,6 +49,7 @@ class Product {
       this.oldPrice,
       this.newPrice,
       this.discount,
+      this.swatch_img_url,
       this.specialPrice,
       this.specialTodate,
       this.specialFromdate,
@@ -76,7 +78,7 @@ class Product {
     isOffer = json['isOffer'];
     offer = json['offer'];
     isInStock = json['isInStock'];
-    oldPrice =  double.parse(json['old_price'].toString()).toInt();
+    oldPrice = double.parse(json['old_price'].toString()).toInt();
     newPrice = double.parse(json['new_price'].toString()).toInt();
     discount = json['discount'];
     specialPrice = json['special_price'].toString();
@@ -86,6 +88,7 @@ class Product {
     specialText = json['special_text'];
     isInCart = json['isInCart'];
     isInWishlist = json['isInWishlist'];
+    swatch_img_url = json['swatch_img_url'];
     qty = json['qty'];
     size_id = json["size_id"].toString();
     amount = json['amount'];
@@ -96,9 +99,8 @@ class Product {
         images.add(new Images.fromJson(v));
       });
     }
-    reviewData = json['items'] != null
-        ? new ReviewData.fromJson(json['items'])
-        : null;
+    reviewData =
+        json['items'] != null ? new ReviewData.fromJson(json['items']) : null;
     // if (json['sizes'] != null) {
     //   sizes = new List<Sizes>();
     //   json['sizes'].forEach((v) {
@@ -132,6 +134,7 @@ class Product {
     data['offer'] = this.offer;
     data['isInStock'] = this.isInStock;
     data['old_price'] = this.oldPrice;
+    data['swatch_img_url'] = this.swatch_img_url;
     data['new_price'] = this.newPrice;
     data['discount'] = this.discount;
     data['special_price'] = this.specialPrice;

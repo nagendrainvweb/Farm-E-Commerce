@@ -51,7 +51,7 @@ final String SOMETHING_WRONG_TEXT =
     "Something went wrong, sorry for inconvenience cause you, Please try after some time.";
 
 myPrint(String text) {
-  print(text);
+  //print(text);
 }
 
 class CustomMargins {}

@@ -283,11 +283,11 @@ class CartItemTile extends StatelessWidget {
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(12),
                             bottomLeft: Radius.circular(12)),
-                        child: (product.images.length > 0)
+                        child: (product.swatch_img_url.isNotEmpty)
                             ? CachedNetworkImage(
                                 width: 120,
                                 height: double.maxFinite,
-                                imageUrl: product.images[0].imageUrl,
+                                imageUrl: product.swatch_img_url,
                                 placeholder: (context, data) {
                                   return Container(
                                     child: new Center(

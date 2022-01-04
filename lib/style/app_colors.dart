@@ -16,7 +16,7 @@ class AppColors {
   static const Color blue = Color(0xff133f79);
   static const Color orange = Color(0xfffa661f);
   static const Color blackGrey = Color(0xff3c3c3c);
-  static const Color green = Color(0xff57b70b);
+  static const Color green = Color(0xffaa3224);
   static const Color tileColor = Color(0xfff6f6f6);
     static final Color backgroundColor = Color(0xfff4f8fb);
 }

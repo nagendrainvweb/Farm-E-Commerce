@@ -92,6 +92,12 @@ class Prefs {
   static Future<String> get privacy =>
       PreferencesHelper.getString(Constants.PRIVACY);
 
+    static Future setLoginDate(String value) =>
+      PreferencesHelper.setString(Constants.LOGIN_DATE, value);
+
+  static Future<String> get loginDate =>
+      PreferencesHelper.getString(Constants.LOGIN_DATE);
+
   static void clear() async {
     Prefs.setLogin(false);
     Prefs.setName("");

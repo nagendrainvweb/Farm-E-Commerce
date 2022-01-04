@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => HomePage()
         },
         theme: ThemeData(
-            primarySwatch: Colors.green,
+            primarySwatch: Colors.brown,
             visualDensity: VisualDensity.adaptivePlatformDensity,
             accentColor: AppColors.green,
             appBarTheme: AppBarTheme(

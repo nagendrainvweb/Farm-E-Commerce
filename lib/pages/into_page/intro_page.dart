@@ -19,6 +19,7 @@ class IntroPage extends StatefulWidget {
 }
 
 class _IntroPageState extends State<IntroPage> {
+  CarouselController buttonCarouselController = CarouselController();
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<IntroViewModel>.reactive(
@@ -35,6 +36,7 @@ class _IntroPageState extends State<IntroPage> {
                     flex: 5,
                     child: CarouselSlider.builder(
                       itemCount: 2,
+                      carouselController: buttonCarouselController,
                       itemBuilder: (_, index, value) => Container(
                         width: double.maxFinite,
                         child: Column(
@@ -71,7 +73,8 @@ class _IntroPageState extends State<IntroPage> {
                         ),
                       ),
                       options: CarouselOptions(
-                          autoPlay: false,
+                          autoPlay: true,
+                          autoPlayInterval: Duration(seconds: 15),
                           enlargeCenterPage: true,
                           enableInfiniteScroll: false,
                           viewportFraction: 1.0,
@@ -131,15 +134,21 @@ class _IntroPageState extends State<IntroPage> {
                 ],
               ),
               Visibility(
-                visible: (model.currentPage == 1),
+                //  visible: (model.currentPage == 1),
                 child: Align(
                   alignment: Alignment.bottomRight,
-                  child: TextButton(
+                  child: FloatingActionButton.extended(
                       onPressed: () async {
-                        await Prefs.setIntroDone(true);
-                        Utility.pushToNext(HomePage(), context);
+                        if (model.currentPage == 1) {
+                          await Prefs.setIntroDone(true);
+                          Utility.pushToNext(HomePage(), context);
+                        } else {
+                          buttonCarouselController.nextPage(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.linear);
+                        }
                       },
-                      child: Text("NEXT")),
+                      label: Text((model.currentPage == 0)?"NEXT":"DONE")),
                 ),
               )
             ],

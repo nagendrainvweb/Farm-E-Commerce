@@ -51,6 +51,7 @@ class Constants {
   static final FAQ = "faq";
   static final TERMS = "terms";
   static final PRIVACY = "privacy";
+  static final LOGIN_DATE = "login_date";
 
   static final SUBSCRIPTION_DATE = "subcription_date";
   static final SUBSCRIPTION_EXPIRY_DATE = "subcription_expiry_date";
@@ -75,8 +76,8 @@ class Constants {
 
   static final URL_DEVICE = "device";
 
-  static final ANDROID_VERSION = "2";
-  static final IOS_VERSION = "2";
+  static final ANDROID_VERSION = "3";
+  static final IOS_VERSION = "3";
   static final ANDROID_DEVICE = "android";
   static final IOS_DEVICE = "ios";
 

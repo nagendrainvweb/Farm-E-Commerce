@@ -62,11 +62,11 @@ class AppProductTile extends StatelessWidget {
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(12),
                             topRight: Radius.circular(12)),
-                        child: (product.images.length > 0)
+                        child: (product.swatch_img_url.isNotEmpty)
                             ? CachedNetworkImage(
                                 width: double.maxFinite,
                                 height: 140,
-                                imageUrl: product.images[0].imageUrl,
+                                imageUrl: product.swatch_img_url,
                                 placeholder: (context, data) {
                                   return Container(
                                     child: new Center(

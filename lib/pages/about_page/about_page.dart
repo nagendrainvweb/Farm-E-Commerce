@@ -56,6 +56,7 @@ class _AboutPageState extends State<AboutPage> {
                     onLoadStart:
                         (InAppWebViewController controller, Uri page) async {
                       if (!page.toString().contains("/about-us")) {
+                        
                         Navigator.pop(context);
                       }
                     },

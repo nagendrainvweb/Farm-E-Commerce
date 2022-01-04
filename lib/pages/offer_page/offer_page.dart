@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lotus_farm/app_widget/AppErrorWidget.dart';
+import 'package:lotus_farm/app_widget/app_empty_widget.dart';
 import 'package:lotus_farm/model/offerResponse.dart';
 import 'package:lotus_farm/pages/offer_page/offer_view_model.dart';
 import 'package:lotus_farm/style/app_colors.dart';
+import 'package:lotus_farm/utils/empty_widget.dart';
 import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
 
@@ -39,6 +41,10 @@ class _OfferPageState extends State<OfferPage> {
                       onRetryCliked: () {
                         model.fetchOffers();
                       })
+                  :(model.offerImageList.isEmpty)?
+                    CustomEmptyWidget(
+                      text:"We do not have any offers right now,\nWe will come with exciting offer for you."
+                    )
                   : Container(
                       child: ListView.builder(
                         itemCount: model.offerImageList.length,

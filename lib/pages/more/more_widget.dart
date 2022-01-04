@@ -86,7 +86,7 @@ class _MoreWidgetState extends State<MoreWidget> {
               onTap: () {
                 Utility.pushToNext(
                     AboutPage(
-                      url: "https://lotusfarms.in/about-us",
+                      url: "https://drmeatshop.com/about-us",
                     ),
                     context);
               },

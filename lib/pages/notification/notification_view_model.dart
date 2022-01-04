@@ -3,6 +3,7 @@ import 'package:lotus_farm/app/locator.dart';
 import 'package:lotus_farm/model/notification_data.dart';
 import 'package:lotus_farm/services/api_service.dart';
 import 'package:lotus_farm/utils/constants.dart';
+import 'package:lotus_farm/utils/utility.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -11,7 +12,7 @@ class NotificationViewModel extends BaseViewModel with AppHelper {
   final _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
 
-  List<NotificationData> _notificationList;
+  List<NotificationData> _notificationList = [];
 
   bool _loading = true;
   bool _hasError = false;
@@ -20,6 +21,7 @@ class NotificationViewModel extends BaseViewModel with AppHelper {
   List<NotificationData> get notificationList => _notificationList;
 
   fetchNotifications() async {
+    myPrint("i am good");
     _loading = true;
     _hasError = false;
     notifyListeners();

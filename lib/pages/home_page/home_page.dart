@@ -177,9 +177,10 @@ class _HomePageState extends State<HomePage> {
                 BottomNavigationBarItem(
                     icon: Container(
                       child: Image.asset(
-                        ImageAsset.logo_small_png,
+                        ImageAsset.logo,
                         height: 30,
-                        width: 30,
+                        width: 40,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     label: "Home"),
